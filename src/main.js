@@ -324,10 +324,10 @@ let lastHoverLabel = '';
 // Fish Data (dolphin = fish5 with tint)
 const fishData = [
   { url: '/models/fish1.glb', pos: [-2, -3, -0.25], scale: 0.4, anim: 'Armature|Swim',       link: '/about.html',   label: 'ABOUT',          glow: '#00ff95' },
-  { url: '/models/fish2.glb', pos: [-3, -0.25, 0],   scale: 0.5, anim: 'Armature|Swim.001',  link: '/works',   label: 'SELECTED WORKS', glow: '#ff9ad5' },
-  { url: '/models/fish3.glb', pos: [2.5, -3, -0.5],  scale: 0.6, anim: 'Armature|Swim',       link: '/cv',      label: 'CV',            glow: '#da44ff' },
-  { url: '/models/fish4.glb', pos: [0.25, 3.4, 0],   scale: 1.2, anim: 'Armature|Swim',       link: '/contact', label: 'CONTACT',       glow: '#8fffc1' },
-  { url: '/models/fish5.glb', pos: [2.7, -0.6, 0],   scale: 0.8, anim: 'Armature|Swim',       link: '/extra',   label: 'EXTRA',         glow: '#8fd3ff', tint: '#ffc7de' },
+  { url: '/models/fish2.glb', pos: [-3, -0.25, 0],   scale: 0.5, anim: 'Armature|Swim.001',  link: '/works.html',   label: 'SELECTED WORKS', glow: '#ff9ad5' },
+  { url: '/models/fish3.glb', pos: [2.5, -3, -0.5],  scale: 0.6, anim: 'Armature|Swim',       link: '/cv.html',      label: 'CV',            glow: '#da44ff' },
+  { url: '/models/fish4.glb', pos: [0.25, 3.4, 0],   scale: 1.2, anim: 'Armature|Swim',       link: '/contact.html', label: 'CONTACT',       glow: '#8fffc1' },
+  { url: '/models/fish5.glb', pos: [2.7, -0.6, 0],   scale: 0.8, anim: 'Armature|Swim',       link: '/extra.html',   label: 'EXTRA',         glow: '#8fd3ff', tint: '#ffc7de' },
 ];
 
 const fishObjects = [];
