@@ -274,44 +274,49 @@ const bgMat = new THREE.ShaderMaterial({
 
     float caustic(vec2 uv) {
       float c1 = sin((uv.x + time * 0.05) * 30.0);
-      float c2 = sin((uv.y + time * 0.06) * 30.0);
-      float c3 = sin((uv.x + uv.y + time * 0.04) * 30.0);
-      return (c1 + c2 + c3) * 0.333;
+      float c2 = sin((uv.y + time * 0.04) * 24.0);
+      return (c1 + c2) * 0.015;
     }
 
     void main() {
-      vec2 uv = vUv;
-      float grad = smoothstep(0.0, 1.0, uv.y);
-      vec3 base = mix(vec3(0.02, 0.12, 0.18), vec3(0.10, 0.45, 0.55), grad);
+      float depth = clamp(vUv.y, 0.0, 1.0);
 
-      float c = caustic(uv);
-      c = abs(c);
-      c = pow(c, 3.0);
+      vec3 surfaceColor = vec3(0.65, 0.90, 0.88);
+      vec3 midColor     = vec3(0.25, 0.55, 0.75);
+      vec3 deepColor    = vec3(0.05, 0.18, 0.38);
 
-      base += vec3(0.18, 0.35, 0.40) * c * 0.25;
-      gl_FragColor = vec4(base, 1.0);
+      vec3 color = mix(
+        mix(deepColor, midColor, smoothstep(0.0, 0.6, depth)),
+        surfaceColor,
+        smoothstep(0.6, 1.0, depth)
+      );
+
+      color += depth * 0.10;
+      color += caustic(vUv) * smoothstep(0.3, 1.0, depth);
+
+      gl_FragColor = vec4(color, 1.0);
     }
   `,
+  side: THREE.DoubleSide,
   depthWrite: false
 });
+const bgPlane = new THREE.Mesh(bgGeo, bgMat);
+bgPlane.position.z = -20;
+scene.add(bgPlane);
 
-const bg = new THREE.Mesh(bgGeo, bgMat);
-bg.position.set(0, 0, -60);
-scene.add(bg);
 
 // ------------------------------
 // Bubbles
-const bubbleCount = 260;
+const bubbleCount = 120;
 const bubbleGeo = new THREE.BufferGeometry();
 const bubblePos = new Float32Array(bubbleCount * 3);
 const bubbleSize = new Float32Array(bubbleCount);
 
 for (let i = 0; i < bubbleCount; i++) {
-  const i3 = i * 3;
-  bubblePos[i3 + 0] = (Math.random() - 0.5) * 18;
-  bubblePos[i3 + 1] = (Math.random() - 0.5) * 16;
-  bubblePos[i3 + 2] = -8 + (Math.random() * 14);
-  bubbleSize[i] = 0.12 + Math.random() * 0.35;
+  bubblePos[i * 3 + 0] = THREE.MathUtils.randFloat(-10, 10);
+  bubblePos[i * 3 + 1] = THREE.MathUtils.randFloat(-8, 8);
+  bubblePos[i * 3 + 2] = THREE.MathUtils.randFloat(-8, -2);
+  bubbleSize[i] = THREE.MathUtils.randFloat(0.4, 1.2);
 }
 
 bubbleGeo.setAttribute('position', new THREE.BufferAttribute(bubblePos, 3));
@@ -320,18 +325,16 @@ bubbleGeo.setAttribute('size', new THREE.BufferAttribute(bubbleSize, 1));
 const bubbleMat = new THREE.ShaderMaterial({
   transparent: true,
   depthWrite: false,
-  blending: THREE.AdditiveBlending,
+  depthTest: false,
   uniforms: { time: { value: 0 } },
   vertexShader: `
-    uniform float time;
     attribute float size;
+    uniform float time;
     varying float vAlpha;
 
-    float mod1(float x, float m){ return x - floor(x/m)*m; }
-
-    void main(){
+    void main() {
       vec3 pos = position;
-      pos.y = mod1(pos.y + time * 0.4 + 8.0, 16.0) - 8.0;
+      pos.y = mod(pos.y + time * 0.4 + 8.0, 16.0) - 8.0;
       pos.x += sin(time * 0.6 + position.y * 2.0) * 0.15;
       vAlpha = smoothstep(-8.0, 8.0, pos.y);
 
@@ -358,7 +361,6 @@ const bubbleMat = new THREE.ShaderMaterial({
     }
   `
 });
-
 const bubbles = new THREE.Points(bubbleGeo, bubbleMat);
 scene.add(bubbles);
 
