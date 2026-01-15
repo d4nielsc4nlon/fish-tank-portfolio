@@ -59,7 +59,7 @@ scene.fog = new THREE.FogExp2(0x3a6f8f, 0.035);
 // Camera
 const camera = new THREE.PerspectiveCamera(
   60,
-  window.innerWidth / window.innerHeight,
+  (getViewportSize().w / getViewportSize().h),
   0.1,
   200
 );
@@ -74,14 +74,35 @@ const renderer = new THREE.WebGLRenderer({
   antialias: false,
   powerPreference: 'high-performance'
 });
-renderer.setPixelRatio(1);
-renderer.setSize(window.innerWidth, window.innerHeight);
+
+function getViewportSize() {
+  // iOS Safari: visualViewport reflects the visible area when bars show/hide
+  const vv = window.visualViewport;
+  const w = vv?.width ?? window.innerWidth;
+  const h = vv?.height ?? window.innerHeight;
+  return { w, h };
+}
+
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+const __vp0 = getViewportSize();
+renderer.setSize(__vp0.w, __vp0.h, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
 
 document.body.appendChild(renderer.domElement);
+
+// Make WebGL canvas behave like a true full-screen background on mobile (esp. iOS Safari)
+Object.assign(renderer.domElement.style, {
+  position: 'fixed',
+  inset: '0',
+  width: '100%',
+  height: '100%',
+  display: 'block',
+  touchAction: 'none'
+});
+
 
 // ------------------------------
 
@@ -146,8 +167,55 @@ function drawHudBlock(ctx, w, h, lines) {
   ctx.globalAlpha = 1.0;
 }
 
-const hudNY = makePixelHudCanvas({ left: '14px', top: '12px', w: 280, h: 44, cssW: 340 });
-const hudTK = makePixelHudCanvas({ right: '14px', top: '12px', w: 280, h: 44, cssW: 340 });
+const hudNY = makePixelHudCanvas({ w: 280, h: 44 });
+const hudTK = makePixelHudCanvas({ w: 280, h: 44 });
+
+function layoutHUD() {
+  const { w } = getViewportSize();
+  const pad = 12;
+
+  const safeTop = 'env(safe-area-inset-top, 0px)';
+  const safeLeft = 'env(safe-area-inset-left, 0px)';
+  const safeRight = 'env(safe-area-inset-right, 0px)';
+
+  const hudCssW = Math.max(220, Math.min(340, Math.floor(w * 0.46)));
+
+  if (w < 560) {
+    Object.assign(hudNY.canvas.style, {
+      top: `calc(${safeTop} + ${pad}px)`,
+      left: '50%',
+      right: 'auto',
+      transform: 'translateX(-50%)',
+      width: `${Math.min(320, Math.floor(w * 0.92))}px`
+    });
+
+    Object.assign(hudTK.canvas.style, {
+      top: `calc(${safeTop} + ${pad + 52}px)`,
+      left: '50%',
+      right: 'auto',
+      transform: 'translateX(-50%)',
+      width: `${Math.min(320, Math.floor(w * 0.92))}px`
+    });
+  } else {
+    Object.assign(hudNY.canvas.style, {
+      top: `calc(${safeTop} + ${pad}px)`,
+      left: `calc(${safeLeft} + ${pad}px)`,
+      right: 'auto',
+      transform: 'none',
+      width: `${hudCssW}px`
+    });
+
+    Object.assign(hudTK.canvas.style, {
+      top: `calc(${safeTop} + ${pad}px)`,
+      right: `calc(${safeRight} + ${pad}px)`,
+      left: 'auto',
+      transform: 'none',
+      width: `${hudCssW}px`
+    });
+  }
+}
+layoutHUD();
+
 
 function getTimeString(timeZone) {
   const now = new Date();
@@ -266,7 +334,7 @@ Object.assign(titleCanvas.style, {
   left: '50%',
   top: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '420px',
+  width: 'min(420px, 92vw)',
   height: 'auto',
   imageRendering: 'pixelated',
   pointerEvents: 'none',
@@ -290,7 +358,7 @@ Object.assign(hoverCanvas.style, {
   left: '50%',
   top: '50%',
   transform: 'translate(-50%, calc(-50% + 52px))',
-  width: '420px',            // scale up (same vibe as title)
+  width: 'min(420px, 92vw)',            // scale up (same vibe as title)
   height: 'auto',
   imageRendering: 'pixelated',
   pointerEvents: 'none',
@@ -300,6 +368,18 @@ Object.assign(hoverCanvas.style, {
 });
 
 document.body.appendChild(hoverCanvas);
+
+
+function layoutTitleAndHover() {
+  const { w } = getViewportSize();
+  const offset = w < 560 ? 40 : 52;
+
+  titleCanvas.style.width = 'min(420px, 92vw)';
+  hoverCanvas.style.width = 'min(420px, 92vw)';
+  hoverCanvas.style.transform = `translate(-50%, calc(-50% + ${offset}px))`;
+}
+layoutTitleAndHover();
+
 
 function drawHoverText(text) {
   hoverCtx.clearRect(0, 0, HOVER_W, HOVER_H);
@@ -735,7 +815,7 @@ const OverheadRipplesShader = {
   uniforms: {
     tDiffuse: { value: null },
     time: { value: 0 },
-    aspect: { value: window.innerWidth / window.innerHeight },
+    aspect: { value: (getViewportSize().w / getViewportSize().h) },
 
     // Tune these:
     scale: { value: 1 },        // bigger = larger ripples
@@ -924,9 +1004,11 @@ composer.addPass(vignettePass);
 
 // ------------------------------
 // Events (now that ripplePass exists)
-window.addEventListener('mousemove', (e) => {
-  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+window.addEventListener('pointermove', (e) => {
+  if (e.pointerType === 'touch') e.preventDefault?.();
+  const { w, h } = getViewportSize();
+  mouse.x = (e.clientX / w) * 2 - 1;
+    mouse.y = -(e.clientY / h) * 2 + 1;
 
   raycaster.setFromCamera(mouse, camera);
   const hits = raycaster.intersectObjects(fishObjects.map(f => f.mesh), true);
@@ -946,9 +1028,13 @@ window.addEventListener('mousemove', (e) => {
     hoverCanvas.style.opacity = nextLabel ? '1' : '0';
     lastHoverLabel = nextLabel;
   }
-});
+}, { passive: false });
 
-window.addEventListener('click', () => {
+window.addEventListener('pointerdown', (e) => {
+  const { w, h } = getViewportSize();
+  mouse.x = (e.clientX / w) * 2 - 1;
+  mouse.y = -(e.clientY / h) * 2 + 1;
+
   raycaster.setFromCamera(mouse, camera);
 
   ripplePass.uniforms.center.value.set((mouse.x + 1) / 2, (mouse.y + 1) / 2);
@@ -1019,7 +1105,7 @@ causticsHighlightPlane.position.y += 0.003; // was ~0.06 (too high)
 
   // NEW: overhead ripples time
   overheadPass.uniforms.time.value = t;
-  overheadPass.uniforms.aspect.value = window.innerWidth / window.innerHeight;
+  // aspect is kept in sync in onResize()
 
   // sand dunes
   animateSeaFloor(seaFloor, seaBase, t, 0.22, 0.33, 0.35);
@@ -1054,12 +1140,27 @@ animate();
 
 // ------------------------------
 // Resize
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
+function onResize() {
+  const { w, h } = getViewportSize();
+
+  camera.aspect = w / h;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  composer.setSize(window.innerWidth, window.innerHeight);
+
+  renderer.setSize(w, h, false);
+  composer.setSize(w, h);
 
   // keep overhead pass aspect correct
-  overheadPass.uniforms.aspect.value = window.innerWidth / window.innerHeight;
-});
+  overheadPass.uniforms.aspect.value = w / h;
+
+  layoutHUD();
+  layoutTitleAndHover();
+}
+
+// Resize events
+window.addEventListener('resize', onResize);
+// iOS Safari: address bar show/hide triggers visualViewport resize/scroll
+window.visualViewport?.addEventListener('resize', onResize);
+window.visualViewport?.addEventListener('scroll', onResize);
+
+// Initial
+onResize();

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daniel Scanlon | Extra</title>
+
+    <style>
+      html, body { margin: 0; height: 100%; background: #061a2a; }
+      body { color: white; font-family: monospace; overflow: hidden; }
+
+      .pixel {
+        image-rendering: pixelated;
+        text-rendering: geometricPrecision;
+        -webkit-font-smoothing: none;
+        letter-spacing: 1px;
+      }
+
+      .frame {
+        position: fixed;
+        inset: 18px;
+        border: 2px solid rgba(255,255,255,0.5);
+        pointer-events: none;
+      }
+
+      .topbar {
+        position: fixed;
+        left: 18px;
+        right: 18px;
+        top: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        pointer-events: none;
+      }
+
+      .back {
+        pointer-events: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: white;
+        opacity: 0.9;
+      }
+      .back:hover { opacity: 1; }
+
+      .wrap {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 48px 18px;
+      }
+
+      .card {
+        width: min(860px, calc(100vw - 72px));
+        max-height: calc(100vh - 140px);
+        overflow: auto;
+        background: rgba(0,0,0,0.22);
+        border: 1px solid rgba(255,255,255,0.28);
+        padding: 22px 22px 18px;
+        box-shadow: 0 10px 50px rgba(0,0,0,0.4);
+        backdrop-filter: blur(6px);
+      }
+
+      h1 { margin: 0 0 8px; font-size: 18px; }
+      p  { margin: 0 0 14px; line-height: 1.55; font-size: 14px; opacity: 0.92; }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 10px;
+      }
+
+      .tile {
+        border: 1px solid rgba(255,255,255,0.18);
+        background: rgba(255,255,255,0.06);
+        padding: 12px;
+      }
+
+      .tile .kicker { font-size: 12px; opacity: 0.75; margin-bottom: 6px; }
+      .tile .title { font-size: 14px; opacity: 0.95; margin-bottom: 6px; }
+      .tile .desc  { font-size: 13px; opacity: 0.88; line-height: 1.5; }
+
+      @media (max-width: 720px) {
+        .grid { grid-template-columns: 1fr; }
+      }
+
+      a { color: #d7fbff; text-decoration: none; pointer-events: auto; }
+      a:hover { text-decoration: underline; }
+
+      .meta { font-size: 12px; opacity: 0.7; margin-top: 14px; }
+    </style>
+  </head>
+
+  <body>
+    <div class="frame"></div>
+
+    <div class="topbar pixel">
+      <a class="back pixel" href="/">← BACK TO TANK</a>
+      <div class="pixel" style="opacity:.8;">EXTRA</div>
+    </div>
+
+    <div class="wrap">
+      <div class="card pixel">
+        <h1>Extra</h1>
+        <p>
+          A loose page for experiments, sketches, writing, and small side projects.
+          Keep it minimal now — you can expand later.
+        </p>
+
+        <div class="grid">
+          <div class="tile">
+            <div class="kicker">SECTION</div>
+            <div class="title">Process / Sketches</div>
+            <div class="desc">
+              Add scanned sketches, model photos, or WIP renders here.
+            </div>
+          </div>
+
+          <div class="tile">
+            <div class="kicker">SECTION</div>
+            <div class="title">Research</div>
+            <div class="desc">
+              Notes on reuse, housing, material systems, Japan-related work, etc.
+            </div>
+          </div>
+
+          <div class="tile">
+            <div class="kicker">SECTION</div>
+            <div class="title">Press / Links</div>
+            <div class="desc">
+              Put external links here (publications, features, PDFs).
+              Example: <a href="#" onclick="return false;">link placeholder</a>.
+            </div>
+          </div>
+
+          <div class="tile">
+            <div class="kicker">SECTION</div>
+            <div class="title">Fun Stuff</div>
+            <div class="desc">
+              Easter eggs, alternate scenes, hidden fish, etc.
+            </div>
+          </div>
+        </div>
+
+        <div class="meta">
+          Tip: Later we can import a shared CSS file so About/CV/Contact/Extra all stay identical.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

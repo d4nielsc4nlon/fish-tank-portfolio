@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daniel Scanlon | Contact</title>
+
+    <style>
+      html, body { margin: 0; height: 100%; background: #061a2a; }
+      body { color: white; font-family: monospace; overflow: hidden; }
+
+      .pixel {
+        image-rendering: pixelated;
+        text-rendering: geometricPrecision;
+        -webkit-font-smoothing: none;
+        letter-spacing: 1px;
+      }
+
+      .frame {
+        position: fixed;
+        inset: 18px;
+        border: 2px solid rgba(255,255,255,0.5);
+        pointer-events: none;
+      }
+
+      .topbar {
+        position: fixed;
+        left: 18px;
+        right: 18px;
+        top: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        pointer-events: none;
+      }
+
+      .back {
+        pointer-events: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: white;
+        opacity: 0.9;
+      }
+      .back:hover { opacity: 1; }
+
+      .wrap {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 48px 18px;
+      }
+
+      .card {
+        width: min(860px, calc(100vw - 72px));
+        max-height: calc(100vh - 140px);
+        overflow: auto;
+        background: rgba(0,0,0,0.22);
+        border: 1px solid rgba(255,255,255,0.28);
+        padding: 22px 22px 18px;
+        box-shadow: 0 10px 50px rgba(0,0,0,0.4);
+        backdrop-filter: blur(6px);
+      }
+
+      h1 { margin: 0 0 8px; font-size: 18px; }
+      p  { margin: 0 0 14px; line-height: 1.55; font-size: 14px; opacity: 0.92; }
+
+      .list {
+        display: grid;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .item {
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 12px;
+        padding: 10px 12px;
+        border: 1px solid rgba(255,255,255,0.18);
+        background: rgba(255,255,255,0.06);
+      }
+
+      .label { opacity: 0.75; font-size: 12px; }
+      .value { font-size: 14px; opacity: 0.95; }
+
+      a { color: #d7fbff; text-decoration: none; pointer-events: auto; }
+      a:hover { text-decoration: underline; }
+
+      .meta { font-size: 12px; opacity: 0.7; margin-top: 14px; }
+    </style>
+  </head>
+
+  <body>
+    <div class="frame"></div>
+
+    <div class="topbar pixel">
+      <a class="back pixel" href="/">← BACK TO TANK</a>
+      <div class="pixel" style="opacity:.8;">CONTACT</div>
+    </div>
+
+    <div class="wrap">
+      <div class="card pixel">
+        <h1>Contact</h1>
+        <p>
+          If you’d like to get in touch about internships, collaborations, or project inquiries,
+          the easiest way is email.
+        </p>
+
+        <div class="list">
+          <div class="item">
+            <div class="label">EMAIL</div>
+            <div class="value">
+              <a href="mailto:danielmaxscanlon@gmail.com">danielmaxscanlon@gmail.com</a>
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="label">LINKEDIN</div>
+            <div class="value">
+              <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer noopener">
+                linkedin.com/…
+              </a>
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="label">INSTAGRAM</div>
+            <div class="value">
+              <a href="https://www.instagram.com/" target="_blank" rel="noreferrer noopener">
+                instagram.com/…
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="meta">
+          Tip: Replace the “…” links with your real URLs whenever you’re ready.
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
