@@ -2,13 +2,18 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Daniel Scanlon | Contact</title>
 
     <style>
       html, body { margin: 0; height: 100%; background: #061a2a; }
-      body { color: white; font-family: monospace; overflow: hidden; }
+      body {
+        color: white;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        overflow: hidden;
+      }
 
+      /* Pixel-ish look */
       .pixel {
         image-rendering: pixelated;
         text-rendering: geometricPrecision;
@@ -16,23 +21,26 @@
         letter-spacing: 1px;
       }
 
+      /* Frame + topbar match your site */
       .frame {
         position: fixed;
-        inset: 18px;
-        border: 2px solid rgba(255,255,255,0.5);
+        inset: max(14px, env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px))
+               max(14px, env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px));
+        border: 2px solid rgba(255,255,255,0.45);
         pointer-events: none;
+        z-index: 20;
       }
 
       .topbar {
         position: fixed;
-        left: 18px;
-        right: 18px;
-        top: 18px;
+        left: calc(env(safe-area-inset-left, 0px) + 18px);
+        right: calc(env(safe-area-inset-right, 0px) + 18px);
+        top: calc(env(safe-area-inset-top, 0px) + 18px);
         display: flex;
         justify-content: space-between;
         align-items: center;
         gap: 12px;
-        pointer-events: none;
+        z-index: 25;
       }
 
       .back {
@@ -46,50 +54,145 @@
       }
       .back:hover { opacity: 1; }
 
+      /* Main layout */
       .wrap {
         position: fixed;
         inset: 0;
         display: grid;
         place-items: center;
-        padding: 48px 18px;
+        padding:
+          calc(env(safe-area-inset-top, 0px) + 84px)
+          calc(env(safe-area-inset-right, 0px) + 18px)
+          calc(env(safe-area-inset-bottom, 0px) + 18px)
+          calc(env(safe-area-inset-left, 0px) + 18px);
+        z-index: 25;
+        pointer-events: none;
       }
 
-      .card {
-        width: min(860px, calc(100vw - 72px));
+      .panel {
+        pointer-events: auto;
+        width: min(920px, 92vw);
         max-height: calc(100vh - 140px);
         overflow: auto;
-        background: rgba(0,0,0,0.22);
+        background: rgba(0,0,0,0.18);
         border: 1px solid rgba(255,255,255,0.28);
-        padding: 22px 22px 18px;
-        box-shadow: 0 10px 50px rgba(0,0,0,0.4);
+        padding: 22px;
+        box-shadow: 0 10px 50px rgba(0,0,0,0.35);
         backdrop-filter: blur(6px);
       }
 
-      h1 { margin: 0 0 8px; font-size: 18px; }
-      p  { margin: 0 0 14px; line-height: 1.55; font-size: 14px; opacity: 0.92; }
+      h1 { margin: 0 0 10px; font-size: 18px; }
+      .sub { margin: 0 0 16px; font-size: 13px; opacity: 0.9; line-height: 1.6; }
 
-      .list {
+      .grid {
         display: grid;
-        gap: 10px;
-        margin-top: 10px;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      @media (max-width: 720px) {
+        .grid { grid-template-columns: 1fr; }
       }
 
-      .item {
-        display: grid;
-        grid-template-columns: 120px 1fr;
+      /* Contact rows */
+      .contactRow {
+        display: flex;
+        align-items: center;
         gap: 12px;
-        padding: 10px 12px;
-        border: 1px solid rgba(255,255,255,0.18);
+        padding: 12px 12px;
+        border: 1px solid rgba(255,255,255,0.22);
         background: rgba(255,255,255,0.06);
       }
 
-      .label { opacity: 0.75; font-size: 12px; }
+      .icon {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(255,255,255,0.30);
+        background: rgba(0,0,0,0.18);
+      }
+
+      .meta {
+        display: grid;
+        gap: 4px;
+      }
+
+      .label { font-size: 11px; opacity: 0.7; }
       .value { font-size: 14px; opacity: 0.95; }
 
-      a { color: #d7fbff; text-decoration: none; pointer-events: auto; }
+      a { color: #d7fbff; text-decoration: none; }
       a:hover { text-decoration: underline; }
 
-      .meta { font-size: 12px; opacity: 0.7; margin-top: 14px; }
+      /* Form */
+      form { display: grid; gap: 10px; }
+
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+
+      .field label {
+        font-size: 11px;
+        opacity: 0.75;
+      }
+
+      input, textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid rgba(255,255,255,0.28);
+        background: rgba(0,0,0,0.18);
+        color: white;
+        padding: 10px 10px;
+        outline: none;
+        font-family: inherit;
+        font-size: 13px;
+        letter-spacing: 1px;
+      }
+
+      textarea { min-height: 150px; resize: vertical; }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 6px;
+      }
+
+      button {
+        cursor: pointer;
+        border: 1px solid rgba(255,255,255,0.35);
+        background: rgba(255,255,255,0.08);
+        color: white;
+        padding: 10px 12px;
+        font-family: inherit;
+        letter-spacing: 1px;
+      }
+      button:hover { background: rgba(255,255,255,0.12); }
+
+      .note {
+        margin-top: 10px;
+        font-size: 11px;
+        opacity: 0.72;
+        line-height: 1.5;
+      }
+
+      /* Small helper toast */
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+        transform: translateX(-50%);
+        padding: 10px 12px;
+        border: 1px solid rgba(255,255,255,0.28);
+        background: rgba(0,0,0,0.35);
+        backdrop-filter: blur(6px);
+        font-size: 12px;
+        opacity: 0;
+        transition: opacity 180ms ease;
+        z-index: 30;
+        pointer-events: none;
+      }
+      .toast.show { opacity: 1; }
     </style>
   </head>
 
@@ -102,44 +205,158 @@
     </div>
 
     <div class="wrap">
-      <div class="card pixel">
+      <div class="panel pixel">
         <h1>Contact</h1>
-        <p>
-          If you’d like to get in touch about internships, collaborations, or project inquiries,
-          the easiest way is email.
+        <p class="sub">
+          Best way to reach me is email — but feel free to text/call if it’s time-sensitive.
         </p>
 
-        <div class="list">
-          <div class="item">
-            <div class="label">EMAIL</div>
-            <div class="value">
-              <a href="mailto:danielmaxscanlon@gmail.com">danielmaxscanlon@gmail.com</a>
+        <div class="grid" style="margin-bottom: 14px;">
+          <div class="contactRow">
+            <div class="icon" aria-hidden="true">☎</div>
+            <div class="meta">
+              <div class="label">PHONE</div>
+              <div class="value"><a href="tel:+12674536540">267-453-6540</a></div>
             </div>
           </div>
 
-          <div class="item">
-            <div class="label">LINKEDIN</div>
-            <div class="value">
-              <a href="https://www.linkedin.com/" target="_blank" rel="noreferrer noopener">
-                linkedin.com/…
-              </a>
-            </div>
-          </div>
-
-          <div class="item">
-            <div class="label">INSTAGRAM</div>
-            <div class="value">
-              <a href="https://www.instagram.com/" target="_blank" rel="noreferrer noopener">
-                instagram.com/…
-              </a>
+          <div class="contactRow">
+            <div class="icon" aria-hidden="true">✉</div>
+            <div class="meta">
+              <div class="label">EMAIL</div>
+              <div class="value"><a href="mailto:danielmaxscanlon@gmail.com">danielmaxscanlon@gmail.com</a></div>
             </div>
           </div>
         </div>
 
-        <div class="meta">
-          Tip: Replace the “…” links with your real URLs whenever you’re ready.
+        <div class="contactRow" style="margin-bottom: 14px;">
+          <div class="icon" aria-hidden="true">▦</div>
+          <div class="meta" style="width: 100%;">
+            <div class="label">SEND A MESSAGE</div>
+            <div class="value" style="opacity: 0.85; font-size: 12px;">
+              This form opens your email client with everything pre-filled.
+            </div>
+          </div>
         </div>
+
+        <form id="contactForm" autocomplete="on">
+          <div class="grid">
+            <div class="field">
+              <label for="name">NAME</label>
+              <input id="name" name="name" type="text" placeholder="Your name" required />
+            </div>
+
+            <div class="field">
+              <label for="from">YOUR EMAIL</label>
+              <input id="from" name="from" type="email" placeholder="name@email.com" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="subject">SUBJECT</label>
+            <input id="subject" name="subject" type="text" placeholder="What’s this about?" required />
+          </div>
+
+          <div class="field">
+            <label for="message">MESSAGE</label>
+            <textarea id="message" name="message" placeholder="Write your message…" required></textarea>
+          </div>
+
+          <div class="actions">
+            <button type="submit">OPEN EMAIL CLIENT</button>
+            <button type="button" id="copyBtn">COPY MESSAGE</button>
+            <button type="reset">CLEAR</button>
+          </div>
+
+          <div class="note">
+            (No backend needed.) If you want true in-page sending later, you’ll need an email service (Formspree, Netlify Forms, EmailJS, etc.).
+          </div>
+        </form>
       </div>
     </div>
+
+    <div id="toast" class="toast pixel">Copied.</div>
+
+    <!-- Same tank scene as main.js, but stripped of fish + HUD -->
+    <script type="module" src="/src/contact.js"></script>
+
+    <script>
+      (function () {
+        const to = 'danielmaxscanlon@gmail.com';
+        const form = document.getElementById('contactForm');
+        const toast = document.getElementById('toast');
+        const copyBtn = document.getElementById('copyBtn');
+
+        function showToast(text) {
+          toast.textContent = text;
+          toast.classList.add('show');
+          clearTimeout(showToast._t);
+          showToast._t = setTimeout(() => toast.classList.remove('show'), 1100);
+        }
+
+        function buildMailto() {
+          const name = document.getElementById('name').value.trim();
+          const from = document.getElementById('from').value.trim();
+          const subject = document.getElementById('subject').value.trim();
+          const message = document.getElementById('message').value.trim();
+
+          const body = [
+            message,
+            '',
+            '—',
+            `From: ${name}`,
+            `Email: ${from}`
+          ].join('\n');
+
+          const params = new URLSearchParams({
+            subject,
+            body
+          });
+
+          return `mailto:${to}?${params.toString()}`;
+        }
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const href = buildMailto();
+          window.location.href = href;
+        });
+
+        copyBtn.addEventListener('click', async () => {
+          const name = document.getElementById('name').value.trim();
+          const from = document.getElementById('from').value.trim();
+          const subject = document.getElementById('subject').value.trim();
+          const message = document.getElementById('message').value.trim();
+
+          const text = [
+            `To: ${to}`,
+            `Subject: ${subject}`,
+            '',
+            message,
+            '',
+            '—',
+            `From: ${name}`,
+            `Email: ${from}`
+          ].join('\n');
+
+          try {
+            await navigator.clipboard.writeText(text);
+            showToast('Copied to clipboard.');
+          } catch {
+            // Fallback: select+copy
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showToast('Copied.');
+          }
+        });
+      })();
+    </script>
   </body>
 </html>
