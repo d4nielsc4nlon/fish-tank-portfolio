@@ -618,34 +618,34 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import gsap from 'gsap';
 
 // --- PROD DEBUG OVERLAY (temporary) ---
-(function () {
-  const box = document.createElement("pre");
-  box.id = "debugOverlay";
-  box.style.cssText = [
-    "position:fixed",
-    "left:12px",
-    "right:12px",
-    "bottom:12px",
-    "max-height:45vh",
-    "overflow:auto",
-    "padding:10px",
-    "border:1px solid #fff",
-    "background:rgba(0,0,0,0.85)",
-    "color:#fff",
-    "font:12px/1.3 monospace",
-    "z-index:999999",
-    "white-space:pre-wrap",
-  ].join(";");
-  document.addEventListener("DOMContentLoaded", () => document.body.appendChild(box));
+// (function () {
+//   const box = document.createElement("pre");
+//   box.id = "debugOverlay";
+//   box.style.cssText = [
+//     "position:fixed",
+//     "left:12px",
+//     "right:12px",
+//     "bottom:12px",
+//     "max-height:45vh",
+//     "overflow:auto",
+//     "padding:10px",
+//     "border:1px solid #fff",
+//     "background:rgba(0,0,0,0.85)",
+//     "color:#fff",
+//     "font:12px/1.3 monospace",
+//     "z-index:999999",
+//     "white-space:pre-wrap",
+//   ].join(";");
+//   document.addEventListener("DOMContentLoaded", () => document.body.appendChild(box));
 
-  window.addEventListener("error", (e) => {
-    box.textContent += `\n[error]\n${e.message}\n${e.filename}:${e.lineno}:${e.colno}\n`;
-  });
+//   window.addEventListener("error", (e) => {
+//     box.textContent += `\n[error]\n${e.message}\n${e.filename}:${e.lineno}:${e.colno}\n`;
+//   });
 
-  window.addEventListener("unhandledrejection", (e) => {
-    box.textContent += `\n[unhandledrejection]\n${String(e.reason?.stack || e.reason)}\n`;
-  });
-})();
+//   window.addEventListener("unhandledrejection", (e) => {
+//     box.textContent += `\n[unhandledrejection]\n${String(e.reason?.stack || e.reason)}\n`;
+//   });
+// })();
 
 // Contact page background scene:
 // Same "tank" environment as main.js, but WITHOUT fish and WITHOUT HUD/time boxes.
