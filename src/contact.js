@@ -636,7 +636,6 @@ import gsap from 'gsap';
     "z-index:999999",
     "white-space:pre-wrap",
   ].join(";");
-  box.textContent = "contact.js loaded ✅\n";
   document.addEventListener("DOMContentLoaded", () => document.body.appendChild(box));
 
   window.addEventListener("error", (e) => {
