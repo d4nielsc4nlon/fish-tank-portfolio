@@ -1,46 +1,5 @@
-
-import * as THREE from 'three';
-import { Clock } from 'three';
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
-import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
-import gsap from 'gsap';
-
-// --- PROD DEBUG OVERLAY (temporary) ---
-(function () {
-  const box = document.createElement("pre");
-  box.id = "debugOverlay";
-  box.style.cssText = [
-    "position:fixed",
-    "left:12px",
-    "right:12px",
-    "bottom:12px",
-    "max-height:45vh",
-    "overflow:auto",
-    "padding:10px",
-    "border:1px solid #fff",
-    "background:rgba(0,0,0,0.85)",
-    "color:#fff",
-    "font:12px/1.3 monospace",
-    "z-index:999999",
-    "white-space:pre-wrap",
-  ].join(";");
-  box.textContent = "contact.js loaded ✅\n";
-  document.addEventListener("DOMContentLoaded", () => document.body.appendChild(box));
-
-  window.addEventListener("error", (e) => {
-    box.textContent += `\n[error]\n${e.message}\n${e.filename}:${e.lineno}:${e.colno}\n`;
-  });
-
-  window.addEventListener("unhandledrejection", (e) => {
-    box.textContent += `\n[unhandledrejection]\n${String(e.reason?.stack || e.reason)}\n`;
-  });
-})();
-
-// Contact page background scene:
-// Same "tank" environment as main.js, but WITHOUT fish and WITHOUT HUD/time boxes.
-
-const clock = new Clock();
+function init() {
+  const clock = new Clock();
 
 function getViewportSize() {
   const vv = window.visualViewport;
@@ -639,3 +598,56 @@ window.addEventListener('resize', onResize);
 window.visualViewport?.addEventListener('resize', onResize);
 window.visualViewport?.addEventListener('scroll', onResize);
 onResize();
+
+
+  // <-- paste the rest of your existing contact.js contents inside here,
+  // starting from: const clock = new Clock(); ...
+}
+
+// Run init only after the DOM is ready (works in dev, preview, and Vercel)
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', init, { once: true });
+} else {
+  init();
+}
+import * as THREE from 'three';
+import { Clock } from 'three';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
+import gsap from 'gsap';
+
+// --- PROD DEBUG OVERLAY (temporary) ---
+(function () {
+  const box = document.createElement("pre");
+  box.id = "debugOverlay";
+  box.style.cssText = [
+    "position:fixed",
+    "left:12px",
+    "right:12px",
+    "bottom:12px",
+    "max-height:45vh",
+    "overflow:auto",
+    "padding:10px",
+    "border:1px solid #fff",
+    "background:rgba(0,0,0,0.85)",
+    "color:#fff",
+    "font:12px/1.3 monospace",
+    "z-index:999999",
+    "white-space:pre-wrap",
+  ].join(";");
+  box.textContent = "contact.js loaded ✅\n";
+  document.addEventListener("DOMContentLoaded", () => document.body.appendChild(box));
+
+  window.addEventListener("error", (e) => {
+    box.textContent += `\n[error]\n${e.message}\n${e.filename}:${e.lineno}:${e.colno}\n`;
+  });
+
+  window.addEventListener("unhandledrejection", (e) => {
+    box.textContent += `\n[unhandledrejection]\n${String(e.reason?.stack || e.reason)}\n`;
+  });
+})();
+
+// Contact page background scene:
+// Same "tank" environment as main.js, but WITHOUT fish and WITHOUT HUD/time boxes.
+
