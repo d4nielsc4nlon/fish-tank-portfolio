@@ -94,3 +94,86 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+/* EXTRA PAGE */
+
+body.extra-page {
+  margin: 0;
+  display: block;
+  place-items: unset;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow: hidden;
+  background: white;
+  color: #111;
+}
+
+#extra-scene {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
+#extra-scene canvas {
+  display: block;
+}
+
+#backToTank {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 20;
+  color: #111;
+  font-family: monospace;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+}
+
+#backToTank:hover {
+  color: #555;
+}
+
+#infoPanel {
+  position: fixed;
+  right: 48px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 360px;
+  padding: 24px;
+  background: rgba(15, 20, 30, 0.92);
+  color: white;
+  z-index: 20;
+  border-radius: 14px;
+  font-family: monospace;
+  letter-spacing: 0.04em;
+}
+
+#infoPanel h2 {
+  margin-top: 0;
+  font-size: 22px;
+}
+
+#infoPanel p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+#infoPanel a {
+  color: white;
+  text-decoration: underline;
+}
+
+#closePanel {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  padding: 0.25em 0.55em;
+  background: transparent;
+  color: white;
+  border: none;
+}
+
+.hidden {
+  display: none;
+}

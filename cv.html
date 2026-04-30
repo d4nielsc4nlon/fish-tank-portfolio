@@ -3,11 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Daniel Scanlon | CV</title>
+    <title>Daniel Scanlon | RESUME</title>
 
     <style>
-      html, body { margin: 0; height: 100%; background: #061a2a; }
-      body { color: white; font-family: monospace; overflow: hidden; }
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: #061a2a;
+      }
+
+      body {
+        color: white;
+        font-family: "Courier New", monospace;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      canvas {
+        position: fixed !important;
+        inset: 0 !important;
+        z-index: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        pointer-events: none;
+      }
 
       .pixel {
         image-rendering: pixelated;
@@ -16,86 +36,264 @@
         letter-spacing: 1px;
       }
 
-      .frame {
-        position: fixed;
-        inset: 18px;
-        border: 2px solid rgba(255,255,255,0.5);
-        pointer-events: none;
-      }
+   a {
+  color: white;
+  text-decoration: none;
+  position: relative;
+  display: inline-block;
 
-      .wrap {
-        position: fixed;
-        inset: 0;
-        display: grid;
-        place-items: center;
-        padding: 48px 18px;
-      }
+  border-bottom: 1px dotted rgba(255,255,255,0.4);
 
-      .card {
-        width: min(860px, calc(100vw - 72px));
-        max-height: calc(100vh - 140px);
-        overflow: auto;
-        background: rgba(0,0,0,0.22);
-        border: 1px solid rgba(255,255,255,0.28);
-        padding: 22px 22px 18px;
-        box-shadow: 0 10px 50px rgba(0,0,0,0.4);
-        backdrop-filter: blur(6px);
-      }
+  transition: 
+    opacity 0.2s ease,
+    text-shadow 0.2s ease,
+    transform 0.12s ease;
+}
+
+/* glow + lift */
+a:hover {
+  opacity: 0.85;
+  text-shadow:
+    0 0 6px rgba(255,255,255,0.8),
+    0 0 14px rgba(180,220,255,0.6);
+
+  transform: translateY(-1px);
+}
+a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+
+  background: rgba(255,255,255,0.6);
+
+  transform: scaleX(0);
+  transform-origin: left;
+
+  transition: transform 0.25s ease;
+}
+
+/* animated underline ripple */
+a:hover::after {
+  transform: scaleX(1);
+  animation: ripple 0.6s ease;
+}
+
+a:hover {
+  animation: jitter 0.25s steps(2) infinite;
+}
+
+@keyframes jitter {
+  0%   { transform: translate(0px, 0px); }
+  50%  { transform: translate(0.5px, -0.5px); }
+  100% { transform: translate(0px, 0px); }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scaleX(0);
+  }
+  50% {
+    transform: scaleX(1.05);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
 
       .topbar {
         position: fixed;
         left: 18px;
         right: 18px;
         top: 18px;
+        z-index: 20;
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        gap: 12px;
         pointer-events: none;
       }
 
       .back {
         pointer-events: auto;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
-        color: white;
-        opacity: 0.9;
       }
-      .back:hover { opacity: 1; }
 
-      h1 { margin: 0 0 8px; font-size: 18px; }
-      p  { margin: 0 0 14px; line-height: 1.55; font-size: 14px; opacity: 0.92; }
-      .meta { font-size: 12px; opacity: 0.75; margin-top: 10px; }
+      .cv-scroll {
+  position: relative;
+  z-index: 10;
+  min-height: 260vh;
+  padding: 42vh 8vw 28vh;
+  box-sizing: border-box;
+}
+
+      .cv-panel {
+        max-width: 900px;
+        margin: 0 auto;
+        text-shadow:
+          2px 2px 0 rgba(0, 45, 95, 0.75),
+          0 0 12px rgba(255, 255, 255, 0.35);
+      }
+
+      h1 {
+        font-size: clamp(40px, 7vw, 80px);
+        margin-bottom: 30px;
+        letter-spacing: 0.18em;
+      }
+
+      h2 {
+        margin-top: 50px;
+        margin-bottom: 14px;
+        font-size: clamp(20px, 2.5vw, 30px);
+        letter-spacing: 0.14em;
+      }
+
+      h3 {
+        margin-top: 24px;
+        margin-bottom: 6px;
+        font-size: clamp(15px, 1.6vw, 20px);
+      }
+
+      p,
+      li {
+        font-size: clamp(13px, 1.25vw, 16px);
+        line-height: 1.6;
+        opacity: 0.95;
+      }
+
+      ul {
+        padding-left: 20px;
+      }
+
+      .entry-meta {
+        opacity: 0.7;
+        margin-bottom: 8px;
+      }
+
+      .ascii {
+        text-align: center;
+        opacity: 0.5;
+        margin: 30px 0;
+      }
+
+      .contact {
+        margin-bottom: 30px;
+        opacity: 0.8;
+      }
     </style>
   </head>
 
   <body>
-    <div class="frame"></div>
-
     <div class="topbar pixel">
-      <a class="back pixel" href="/">← BACK TO TANK</a>
-      <div class="pixel" style="opacity:.8;">CV</div>
+      <a class="back pixel" href="/">← BACK</a>
+      <div class="pixel">RESUME</div>
     </div>
 
-    <div class="wrap">
-      <div class="card pixel">
-        <h1>Curriculum Vitae</h1>
+    <main class="cv-scroll pixel">
+      <section class="cv-panel">
 
-        <p>Architecture + Interiors</p>
+        <h1>RESUME</h1>
 
-        <p>
-          Hi my name is Daniel.<br />
-          Here is where I went to college.<br />
-          Here is where I am going to grad school.<br />
-          Here is where I have worked.
+        <p class="contact">
+          Daniel Scanlon · Brooklyn, NY · danielmaxscanlon@gmail.com
         </p>
 
-        <div class="meta">
-          Tip: Later you can import a shared CSS file + reuse the same header UI across all pages.
-        </div>
-      </div>
-    </div>
+        <h2>Education</h2>
+
+        <h3><a href="https://www.arch.columbia.edu/">Columbia University GSAPP</a></h3>
+        <p class="entry-meta">Master of Architecture · New York, NY · 2025–2028</p>
+
+        <h3><a href="https://architecture.sas.upenn.edu/">University of Pennsylvania</a></h3>
+        <p class="entry-meta">B.A. Architecture · Philadelphia, PA · 2021–2025</p>
+
+        <ul>
+          <li>Summa Cum Laude (2025)</li>
+          <li>Wesley Memorial Prize for Excellence in Design (2025)</li>
+          <li>Steven Yaron Prize (2024)</li>
+          <li>Hart Howerton Fellowship Semifinalist (2024)</li>
+          <li>ULI Bruce Etkin Scholar (2022-2025)</li>
+          <li>QuestBridge National College Match Scholar (2021)</li>
+        </ul>
+
+        <p class="ascii">◇◇◇  ~ ~ ~  ◇◇◇</p>
+
+        <h2>Experience</h2>
+
+        <h3><a href="https://studiombm.co">Studio MBM</a></h3>
+        <p class="entry-meta">Designer · New York, NY · 2026–</p>
+
+        <h3><a href="https://www.russellpiccione.com">Russell Piccione Design</a></h3>
+        <p class="entry-meta">Design Intern · New York, NY · 2025–2026</p>
+
+        <h3><a href="https://www.instagram.com/crosbystudios/">Crosby Studios</a></h3>
+        <p class="entry-meta">Design Intern · New York, NY · 2024</p>
+
+        <p class="ascii">:::::  * * *  :::::</p>
+
+        <h2>Skills</h2>
+
+        <ul>
+          <li>Rhino, Grasshopper, Revit, AutoCAD, Archicad, Vectorworks</li>
+          <li>Blender, Enscape, V-Ray, ClimateStudio</li>
+          <li>ArcGIS, Tableau, RStudio</li>
+          <li>JavaScript, Python, C#, HTML</li>
+        </ul>
+
+        <h2>Interests</h2>
+
+        <ul>
+          <li>Urban analytics + spatial data</li>
+          <li>Low-carbon design + material systems</li>
+          <li>Public-interest architecture</li>
+          <li>3D animation + visual storytelling</li>
+          <li>Fashion, woodworking, linguistics</li>
+        </ul>
+
+        <p class="ascii">◇◇◇  * * *   ◇◇◇</p>
+
+        <h2>Clients & Collaborators</h2>
+
+        <h3>New York City</h3>
+        <ul>
+          <li><a href="https://fablstyle.com/american-sabotage-launch-asap-rocky-awge-roc-nation-puma/">Puma</a></li>
+          <li><a href="https://instoremag.com/store-of-tomorrow-to-debut-in-ny/">SmartTech</a></li>
+          <li><a href="https://www.youtube.com/watch?v=JypC7veMlaw">Alexander Wang</a></li>
+          <li><a href="https://www.luxuryatcompass.com/spotlight/quiet-luxury-in-williamsburg-with-crosby-studios">Compass</a></li>
+          <li><a href="https://www.instagram.com/p/DSkKFxIDJ6-/?img_index=10">Buddy Buddy</a></li>
+          <li><a href="https://www.studioinstitute.org">The Studio Institute</a></li>
+        </ul>
+
+        <h3>Philadelphia</h3>
+        <ul>
+          <li><a href="https://polymer.seas.upenn.edu/research/">Penn Composto Lab</a></li>
+          <li><a >Philadelphia Black Urban Theater</a></li>
+          <li><a href="https://eastparkside.org">East Parkside Development Corporation</a></li>
+          <li><a href="https://chinatown-pcdc.org/">Philadelphia Chinatown Development Corporation</a></li>
+        </ul>
+
+        <h3>Newark</h3>
+        <ul>
+          <li><a href="https://www.glassroots.org">GlassRoots Inc</a></li>
+        </ul>
+
+        <h3>International</h3>
+        <ul>
+          <li><a href="https://www.designboom.com/design/crosby-studios-creativity-five-levels-casetify-flagship-seoul-11-15-2024/">Casetify · Seoul</a></li>
+          <li><a href="https://www.aishti.com">Aïshti Lifestyle · Beirut</a></li>
+        </ul>
+
+        <h3>Regional / Government</h3>
+        <ul>
+          <li><a >Montgomery County Commissioners (PA)</a></li>
+        </ul>
+
+        <h3>Freelance</h3>
+        <ul>
+          <li><a href="https://www.domandecors.com/">Doman Decors (Ongoing)</a></li>
+        </ul>
+
+      </section>
+    </main>
+
+    <script type="module" src="/src/cv.js"></script>
   </body>
 </html>

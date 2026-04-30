@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
-import { resolve } from 'path'
+import { defineConfig } from 'vite';
+import { resolve } from 'path';
 
 export default defineConfig({
   build: {
@@ -10,8 +10,8 @@ export default defineConfig({
         cv: resolve(__dirname, 'cv.html'),
         works: resolve(__dirname, 'works.html'),
         contact: resolve(__dirname, 'contact.html'),
-        extra: resolve(__dirname, 'extra.html'),
+        extra: resolve(__dirname, 'extra.html')
       }
     }
   }
-})
+});

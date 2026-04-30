@@ -6,99 +6,226 @@
     <title>Daniel Scanlon | About</title>
 
     <style>
-      html, body { margin: 0; height: 100%; background: #061a2a; }
-      body { color: white; font-family: monospace; overflow: hidden; }
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        background: #061a2a;
+      }
 
-      /* pixel-ish look without external fonts */
+      body {
+        color: white;
+        font-family: "Courier New", monospace;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      canvas {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+      }
+
       .pixel {
         image-rendering: pixelated;
         text-rendering: geometricPrecision;
-        font-smooth: never;
         -webkit-font-smoothing: none;
         letter-spacing: 1px;
       }
 
-      .frame {
-        position: fixed;
-        inset: 18px;
-        border: 2px solid rgba(255,255,255,0.5);
-        pointer-events: none;
-      }
-
-      .wrap {
-        position: fixed;
-        inset: 0;
-        display: grid;
-        place-items: center;
-        padding: 48px 18px;
-      }
-
-      .card {
-        width: min(860px, calc(100vw - 72px));
-        max-height: calc(100vh - 140px);
-        overflow: auto;
-        background: rgba(0,0,0,0.22);
-        border: 1px solid rgba(255,255,255,0.28);
-        padding: 22px 22px 18px;
-        box-shadow: 0 10px 50px rgba(0,0,0,0.4);
-        backdrop-filter: blur(6px);
-      }
+      /* ---------- NAV ---------- */
 
       .topbar {
         position: fixed;
         left: 18px;
         right: 18px;
         top: 18px;
+        z-index: 20;
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        gap: 12px;
+        pointer-events: none;
       }
 
       .back {
         pointer-events: auto;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
         color: white;
-        opacity: 0.9;
+        text-decoration: none;
       }
-      .back:hover { opacity: 1; }
 
-      h1 { margin: 0 0 8px; font-size: 18px; }
-      p  { margin: 0 0 14px; line-height: 1.55; font-size: 14px; opacity: 0.92; }
-      .meta { font-size: 12px; opacity: 0.75; margin-top: 10px; }
+      /* ---------- LAYOUT ---------- */
+
+      .cv-scroll {
+        position: relative;
+        z-index: 10;
+        min-height: 200vh;
+        padding: 42vh 8vw 28vh;
+        box-sizing: border-box;
+      }
+
+      .cv-panel {
+        max-width: 900px;
+        margin: 0 auto;
+        text-shadow:
+          2px 2px 0 rgba(0, 45, 95, 0.75),
+          0 0 12px rgba(255, 255, 255, 0.35);
+        position: relative;
+      }
+
+      /* ---------- TYPE ---------- */
+
+      h1 {
+        font-size: clamp(40px, 7vw, 80px);
+        margin-bottom: 30px;
+        letter-spacing: 0.18em;
+      }
+
+      p {
+        font-size: clamp(15px, 1.6vw, 22px);
+        line-height: 1.7;
+        margin-bottom: 24px;
+        opacity: 0.95;
+      }
+
+      .ascii {
+        text-align: center;
+        opacity: 0.5;
+        margin: 34px 0;
+      }
+
+      .meta {
+        margin-top: 34px;
+        font-size: 13px;
+        opacity: 0.7;
+      }
+
+      /* ---------- FADE-IN ---------- */
+
+      .fade {
+        opacity: 0;
+        transform: translateY(24px);
+        transition: opacity 0.9s ease, transform 0.9s ease;
+      }
+
+      .fade.visible {
+        opacity: 0.95;
+        transform: translateY(0px);
+      }
+
+      /* ---------- LINK SYSTEM ---------- */
+
+      a {
+        color: white;
+        text-decoration: none;
+        border-bottom: 1px dotted rgba(255,255,255,0.4);
+        position: relative;
+      }
+
+      a:hover {
+        text-shadow:
+          0 0 6px rgba(255,255,255,0.8),
+          0 0 14px rgba(180,220,255,0.6);
+
+        animation: jitter 0.25s steps(2) infinite;
+      }
+
+      @keyframes jitter {
+        0%   { transform: translate(0px, 0px); }
+        50%  { transform: translate(0.5px, -0.5px); }
+        100% { transform: translate(0px, 0px); }
+      }
+
+      /* ---------- WATER REFRACTION ---------- */
+
+      .cv-panel::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(255,255,255,0.02);
+        mix-blend-mode: overlay;
+        pointer-events: none;
+        animation: waterShift 7s ease-in-out infinite;
+      }
+
+      @keyframes waterShift {
+        0%   { transform: translate(0px, 0px); }
+        50%  { transform: translate(2px, -1px); }
+        100% { transform: translate(0px, 0px); }
+      }
     </style>
   </head>
 
   <body>
-    <div class="frame"></div>
-
     <div class="topbar pixel">
-      <a class="back pixel" href="/">
-        ← BACK TO TANK
-      </a>
-      <div class="pixel" style="opacity:.8;">ABOUT</div>
+      <a class="back pixel" href="/">← BACK</a>
+      <div class="pixel">ABOUT</div>
     </div>
 
-    <div class="wrap">
-      <div class="card pixel">
-        <h1>Daniel Scanlon</h1>
-        <p>
-          Architecture + Interiors
-        <p>
-          Hi my name is Daniel 
+    <main class="cv-scroll pixel">
+      <section class="cv-panel">
+
+        <h1 class="fade">About Me</h1>
+
+        <p class="fade">
+          I’m Daniel Scanlon, a designer working across architecture, spatial design,
+          urban analytics, and visual media. I’m interested in how design can operate
+          across scales—from material systems to cities—to produce more just and
+          environmentally responsible futures.
         </p>
 
-        <div class="meta">
-          Tip: You can keep this page super minimal now, then later bring in the same underwater
-          background as the home screen (optional).
-        </div>
-      </div>
-    </div>
-<!-- DEPLOY TEST: 2026-01-10 14:32 -->
-    <!-- Optional JS entry if you want effects later -->
-    <!-- <script type="module" src="/src/pages/about.js"></script> -->
+        <p class="ascii fade">◇◇◇  ~ ~ ~  ◇◇◇</p>
+
+        <p class="fade">
+          I spent my childhood between South Florida and New Hope, Pennsylvania, and
+          those shifting environments continue to inform how I think about landscape,
+          development, and the uneven ways people experience place.
+        </p>
+
+        <p class="fade">
+          My work focuses on low-carbon, public-interest design, with an emphasis on
+          advancing more equitable conditions for marginalized, queer, and low-income
+          communities.
+        </p>
+
+        <p class="ascii fade">:::::  * * *  :::::</p>
+
+        <p class="fade">
+          I studied at the University of Pennsylvania and Columbia GSAPP on scholarship,
+          and coming from a low-income background has shaped my commitment to creating
+          access and community for emerging designers.
+        </p>
+
+        <p class="fade">
+          I currently live in Brooklyn, where I split my time between school, office
+          work, and freelancing.
+        </p>
+
+        <p class="fade">
+          I’m always open to commissions and collaborations, and I love connecting
+          with other designers, artists, and creatives.
+        </p>
+
+        <div class="meta fade">Based in Brooklyn, NY</div>
+
+      </section>
+    </main>
+
+    <script type="module" src="/src/about.js"></script>
+
+    <script>
+      const fades = document.querySelectorAll('.fade');
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        },
+        { threshold: 0.15 }
+      );
+
+      fades.forEach(el => observer.observe(el));
+    </script>
   </body>
 </html>

@@ -1,70 +1,292 @@
-cat > works.html <<'EOF'
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Daniel Scanlon | Selected Works</title>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Selected Works</title>
 
-    <style>
-      html, body { margin: 0; height: 100%; background: #061a2a; }
-      body { color: white; font-family: monospace; overflow: hidden; }
+<style>
+html, body {
+  margin: 0;
+  background: #000;
+  color: white;
+  font-family: monospace;
+}
 
-      .pixel {
-        image-rendering: pixelated;
-        text-rendering: geometricPrecision;
-        font-smooth: never;
-        -webkit-font-smoothing: none;
-        letter-spacing: 1px;
+.gallery {
+  padding: 40px;
+  column-count: 3;
+  column-gap: 20px;
+}
+
+.gallery {
+  transition: opacity 0.25s ease;
+}
+
+.gallery.fade-out {
+  opacity: 0;
+}
+
+.gallery.fade-in {
+  opacity: 1;
+}
+
+/* responsive */
+@media (max-width: 1200px) { .gallery { column-count: 2; } }
+@media (max-width: 700px) { .gallery { column-count: 1; } }
+
+.item {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.item.show {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.5s ease;
+}
+
+.item {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+  break-inside: avoid;
+
+  border: 2px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.item:hover {
+  border-color: lime;
+}
+
+/* 🔥 THIS FIXES INVISIBLE IMAGES */
+.item img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+
+.item:hover::after {
+  opacity: 1;
+}
+
+.item img {
+  transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+.item:hover img {
+  transform: scale(1.04) translateY(-2px);
+  filter: brightness(1.05);
+}
+.viewer {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.95);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.viewer img {
+  max-width: 90vw;
+  max-height: 80vh;
+}
+
+.caption {
+  margin-top: 12px;
+  opacity: 0.7;
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.left { left: 30px; }
+.right { right: 30px; }
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  cursor: pointer;
+}
+
+.filters {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.filters button {
+  background: none;
+  border: none;
+  color: white;
+  margin: 6px;
+  cursor: pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="filters">
+  <button data-filter="all">ALL</button>
+  <button data-filter="architecture">ARCHITECTURE</button>
+  <button data-filter="graphics">GRAPHICS</button>
+  <button data-filter="animation">ANIMATION</button>
+</div>
+
+<div class="gallery"></div>
+
+<div class="viewer" id="viewer">
+  <div class="close">✕</div>
+  <div class="nav left">←</div>
+  <img id="viewerImg"/>
+  <div class="nav right">→</div>
+  <div class="caption" id="caption"></div>
+</div>
+
+<script type="module">
+document.addEventListener("DOMContentLoaded", () => {
+
+  const modules = import.meta.glob(
+    "./src/assets/selected_works/**/*.{png,jpg,jpeg,webp,gif,pdf}",
+    { eager: true, import: "default" }
+  );
+
+  const images = Object.entries(modules).map(([path, url]) => {
+    const match = path.match(/selected_works\/([^/]+)/);
+    return {
+      url,
+      path,
+      category: match ? match[1].toLowerCase() : "unknown"
+    };
+  });
+
+  const gallery = document.querySelector(".gallery");
+  const viewer = document.getElementById("viewer");
+  const viewerImg = document.getElementById("viewerImg");
+  const caption = document.getElementById("caption");
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+  let currentIndex = 0;
+  let filtered = shuffle(images);
+
+  function cleanName(path) {
+    let file = path.split("/").pop();
+    try { file = decodeURIComponent(file); } catch {}
+    return file.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+  }
+
+  /* 🔥 PRELOAD IMAGES */
+  function preloadImages(data) {
+    data.forEach(img => {
+      const i = new Image();
+      i.src = img.url;
+    });
+  }
+
+  /* 🔥 BUILD GALLERY */
+  function buildGallery(data) {
+    gallery.classList.add("fade-out");
+
+    setTimeout(() => {
+      gallery.innerHTML = "";
+
+      data.forEach((img, i) => {
+        const div = document.createElement("div");
+        div.className = "item";
+
+        const image = document.createElement("img");
+        image.src = img.url;
+        
+
+        div.appendChild(image);
+
+        div.addEventListener("click", () => {
+          currentIndex = i;
+          openViewer();
+        });
+
+        gallery.appendChild(div);
+
+        /* 🔥 STAGGER */
+        setTimeout(() => {
+          div.classList.add("show");
+        }, i * 40);
+      });
+
+      gallery.classList.remove("fade-out");
+      gallery.classList.add("fade-in");
+
+    }, 200);
+  }
+
+  function openViewer() {
+    viewer.style.display = "flex";
+    updateViewer();
+  }
+
+  function updateViewer() {
+    const item = filtered[currentIndex];
+    viewerImg.src = item.url;
+    caption.textContent = cleanName(item.path);
+  }
+
+  function closeViewer() {
+    viewer.style.display = "none";
+  }
+
+  document.querySelector(".left").onclick = () => {
+    currentIndex = (currentIndex - 1 + filtered.length) % filtered.length;
+    updateViewer();
+  };
+
+  document.querySelector(".right").onclick = () => {
+    currentIndex = (currentIndex + 1) % filtered.length;
+    updateViewer();
+  };
+
+  document.querySelector(".close").onclick = closeViewer;
+
+  window.addEventListener("keydown", (e) => {
+    if (viewer.style.display !== "flex") return;
+    if (e.key === "Escape") closeViewer();
+    if (e.key === "ArrowRight") document.querySelector(".right").click();
+    if (e.key === "ArrowLeft") document.querySelector(".left").click();
+  });
+
+  /* 🔥 FILTERS WITH FADE */
+  document.querySelectorAll(".filters button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const filter = btn.dataset.filter.toLowerCase();
+
+      if (filter === "all") {
+        filtered = [...images];
+      } else {
+        filtered = images.filter(img => img.category === filter);
       }
 
-      .frame {
-        position: fixed;
-        inset: 18px;
-        border: 2px solid rgba(255,255,255,0.5);
-        pointer-events: none;
-        z-index: 30;
-      }
+      currentIndex = 0;
+      preloadImages(filtered);
+      buildGallery(filtered);
+    });
+  });
 
-      .topbar {
-        position: fixed;
-        left: 18px;
-        right: 18px;
-        top: 18px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        z-index: 120;
-        pointer-events: none;
-      }
+  preloadImages(filtered);
+  buildGallery(filtered);
 
-      .back {
-        pointer-events: auto;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
-        color: white;
-        opacity: 0.9;
-        border: 1px solid rgba(255,255,255,.35);
-        padding: 8px 10px;
-        background: rgba(0,0,0,.25);
-      }
-      .back:hover { opacity: 1; border-color: rgba(255,255,255,.7); }
-    </style>
-  </head>
+});
+</script>
 
-  <body>
-    <div class="frame"></div>
-
-    <div class="topbar pixel">
-      <a class="back pixel" href="/">← BACK TO TANK</a>
-      <div class="pixel" style="opacity:.8;">SELECTED WORKS</div>
-    </div>
-
-    <!-- Works grid + background scene -->
-    <script type="module" src="/src/works.js"></script>
-  </body>
+</body>
 </html>
-EOF
