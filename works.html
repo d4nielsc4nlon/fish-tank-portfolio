@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Selected Works</title>
 
 <style>
@@ -13,13 +13,56 @@ html, body {
   font-family: monospace;
 }
 
-.gallery {
-  padding: 40px;
-  column-count: 3;
-  column-gap: 20px;
+/* TOP BAR */
+.topbar {
+  position: fixed;
+  top: 24px;
+  left: 28px;
+  z-index: 1000;
 }
 
+.back {
+  text-decoration: none;
+  color: white;
+  padding: 8px 0;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.back:hover {
+  color: #7cff00;
+  text-shadow: 0 0 6px #7cff00;
+}
+
+/* FILTERS */
+.filters {
+  text-align: center;
+  margin-top: 78px;
+  margin-bottom: 80px;
+}
+
+.filters button {
+  background: none;
+  border: none;
+  color: white;
+  margin: 0 28px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 18px;
+  letter-spacing: 0.04em;
+}
+
+.filters button:hover,
+.filters button.active {
+  color: #7cff00;
+}
+
+/* GALLERY */
 .gallery {
+  padding: 0 40px 40px;
+  column-count: 3;
+  column-gap: 20px;
   transition: opacity 0.25s ease;
 }
 
@@ -31,48 +74,33 @@ html, body {
   opacity: 1;
 }
 
-/* responsive */
-@media (max-width: 1200px) { .gallery { column-count: 2; } }
-@media (max-width: 700px) { .gallery { column-count: 1; } }
-
-.item {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.item.show {
-  opacity: 1;
-  transform: translateY(0);
-  transition: all 0.5s ease;
-}
-
 .item {
   position: relative;
   overflow: hidden;
   margin-bottom: 20px;
   break-inside: avoid;
-
+  opacity: 0;
+  transform: translateY(20px);
   border: 2px solid transparent;
-  transition: border-color 0.2s ease;
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease,
+    border-color 0.2s ease;
+}
+
+.item.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .item:hover {
   border-color: lime;
 }
 
-/* 🔥 THIS FIXES INVISIBLE IMAGES */
 .item img {
   width: 100%;
   height: auto;
   display: block;
-}
-
-
-.item:hover::after {
-  opacity: 1;
-}
-
-.item img {
   transition: transform 0.4s ease, filter 0.4s ease;
 }
 
@@ -80,10 +108,13 @@ html, body {
   transform: scale(1.04) translateY(-2px);
   filter: brightness(1.05);
 }
+
+/* VIEWER */
 .viewer {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.95);
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.95);
   display: none;
   align-items: center;
   justify-content: center;
@@ -105,38 +136,60 @@ html, body {
   top: 50%;
   font-size: 30px;
   cursor: pointer;
+  user-select: none;
 }
 
-.left { left: 30px; }
-.right { right: 30px; }
+.left {
+  left: 30px;
+}
+
+.right {
+  right: 30px;
+}
 
 .close {
   position: absolute;
   top: 20px;
   right: 30px;
   cursor: pointer;
+  font-size: 22px;
 }
 
-.filters {
-  text-align: center;
-  margin-top: 40px;
+/* RESPONSIVE */
+@media (max-width: 1200px) {
+  .gallery {
+    column-count: 2;
+  }
 }
 
-.filters button {
-  background: none;
-  border: none;
-  color: white;
-  margin: 6px;
-  cursor: pointer;
-}
+@media (max-width: 700px) {
+  .filters {
+    margin-top: 86px;
+    margin-bottom: 48px;
+  }
 
+  .filters button {
+    display: inline-block;
+    margin: 8px 12px;
+    font-size: 14px;
+  }
+
+  .gallery {
+    column-count: 1;
+    padding: 0 24px 32px;
+  }
+}
 </style>
 </head>
 
 <body>
 
+<div class="topbar">
+  <a class="back" href="/">← BACK TO TANK</a>
+</div>
+
 <div class="filters">
-  <button data-filter="all">ALL</button>
+  <button class="active" data-filter="all">ALL</button>
   <button data-filter="architecture">ARCHITECTURE</button>
   <button data-filter="graphics">GRAPHICS</button>
   <button data-filter="animation">ANIMATION</button>
@@ -147,14 +200,13 @@ html, body {
 <div class="viewer" id="viewer">
   <div class="close">✕</div>
   <div class="nav left">←</div>
-  <img id="viewerImg"/>
+  <img id="viewerImg" />
   <div class="nav right">→</div>
   <div class="caption" id="caption"></div>
 </div>
 
 <script type="module">
 document.addEventListener("DOMContentLoaded", () => {
-
   const modules = import.meta.glob(
     "./src/assets/selected_works/**/*.{png,jpg,jpeg,webp,gif,pdf}",
     { eager: true, import: "default" }
@@ -162,6 +214,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const images = Object.entries(modules).map(([path, url]) => {
     const match = path.match(/selected_works\/([^/]+)/);
+
     return {
       url,
       path,
@@ -173,65 +226,69 @@ document.addEventListener("DOMContentLoaded", () => {
   const viewer = document.getElementById("viewer");
   const viewerImg = document.getElementById("viewerImg");
   const caption = document.getElementById("caption");
-
-function shuffle(arr) {
-  return [...arr].sort(() => Math.random() - 0.5);
-}
+  const filterButtons = document.querySelectorAll(".filters button");
 
   let currentIndex = 0;
   let filtered = shuffle(images);
 
-  function cleanName(path) {
-    let file = path.split("/").pop();
-    try { file = decodeURIComponent(file); } catch {}
-    return file.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+  function shuffle(arr) {
+    return [...arr].sort(() => Math.random() - 0.5);
   }
 
-  /* 🔥 PRELOAD IMAGES */
+  function cleanName(path) {
+    let file = path.split("/").pop();
+
+    try {
+      file = decodeURIComponent(file);
+    } catch {}
+
+    return file
+      .replace(/\.[^/.]+$/, "")
+      .replace(/[-_]/g, " ");
+  }
+
   function preloadImages(data) {
-    data.forEach(img => {
-      const i = new Image();
-      i.src = img.url;
+    data.forEach(item => {
+      const img = new Image();
+      img.src = item.url;
     });
   }
 
-  /* 🔥 BUILD GALLERY */
   function buildGallery(data) {
     gallery.classList.add("fade-out");
 
     setTimeout(() => {
       gallery.innerHTML = "";
 
-      data.forEach((img, i) => {
-        const div = document.createElement("div");
-        div.className = "item";
+      data.forEach((item, index) => {
+        const tile = document.createElement("div");
+        tile.className = "item";
 
         const image = document.createElement("img");
-        image.src = img.url;
-        
+        image.src = item.url;
+        image.alt = cleanName(item.path);
 
-        div.appendChild(image);
+        tile.appendChild(image);
 
-        div.addEventListener("click", () => {
-          currentIndex = i;
+        tile.addEventListener("click", () => {
+          currentIndex = index;
           openViewer();
         });
 
-        gallery.appendChild(div);
+        gallery.appendChild(tile);
 
-        /* 🔥 STAGGER */
         setTimeout(() => {
-          div.classList.add("show");
-        }, i * 40);
+          tile.classList.add("show");
+        }, index * 40);
       });
 
       gallery.classList.remove("fade-out");
       gallery.classList.add("fade-in");
-
     }, 200);
   }
 
   function openViewer() {
+    if (!filtered.length) return;
     viewer.style.display = "flex";
     updateViewer();
   }
@@ -239,6 +296,7 @@ function shuffle(arr) {
   function updateViewer() {
     const item = filtered[currentIndex];
     viewerImg.src = item.url;
+    viewerImg.alt = cleanName(item.path);
     caption.textContent = cleanName(item.path);
   }
 
@@ -246,35 +304,38 @@ function shuffle(arr) {
     viewer.style.display = "none";
   }
 
-  document.querySelector(".left").onclick = () => {
+  function showPrevious() {
     currentIndex = (currentIndex - 1 + filtered.length) % filtered.length;
     updateViewer();
-  };
+  }
 
-  document.querySelector(".right").onclick = () => {
+  function showNext() {
     currentIndex = (currentIndex + 1) % filtered.length;
     updateViewer();
-  };
+  }
 
-  document.querySelector(".close").onclick = closeViewer;
+  document.querySelector(".left").addEventListener("click", showPrevious);
+  document.querySelector(".right").addEventListener("click", showNext);
+  document.querySelector(".close").addEventListener("click", closeViewer);
 
-  window.addEventListener("keydown", (e) => {
+  window.addEventListener("keydown", event => {
     if (viewer.style.display !== "flex") return;
-    if (e.key === "Escape") closeViewer();
-    if (e.key === "ArrowRight") document.querySelector(".right").click();
-    if (e.key === "ArrowLeft") document.querySelector(".left").click();
+
+    if (event.key === "Escape") closeViewer();
+    if (event.key === "ArrowRight") showNext();
+    if (event.key === "ArrowLeft") showPrevious();
   });
 
-  /* 🔥 FILTERS WITH FADE */
-  document.querySelectorAll(".filters button").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const filter = btn.dataset.filter.toLowerCase();
+  filterButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      const filter = button.dataset.filter.toLowerCase();
 
-      if (filter === "all") {
-        filtered = [...images];
-      } else {
-        filtered = images.filter(img => img.category === filter);
-      }
+      filterButtons.forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+
+      filtered = filter === "all"
+        ? shuffle(images)
+        : images.filter(item => item.category === filter);
 
       currentIndex = 0;
       preloadImages(filtered);
@@ -284,7 +345,6 @@ function shuffle(arr) {
 
   preloadImages(filtered);
   buildGallery(filtered);
-
 });
 </script>
 
