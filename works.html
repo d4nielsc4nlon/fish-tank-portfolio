@@ -1,3 +1,8 @@
+
+
+
+
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,12 +10,70 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Selected Works</title>
 
+
+
 <style>
-html, body {
+  
+body {
   margin: 0;
-  background: #000;
-  color: white;
-  font-family: monospace;
+  background: #000; /* fallback */
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+
+  background-image: radial-gradient(rgba(255,255,255,0.15) 3px, transparent 3px);
+  background-size: 16px 16px;
+
+  opacity: 1; /* 🔥 VERY subtle */
+  mix-blend-mode: overlay;
+  mask-image: linear-gradient(
+  to bottom,
+  rgba(0,0,0,0.8),
+  rgba(0,0,0,0.3) 80%,
+  rgba(0,0,0,0)
+);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+
+  background: linear-gradient(
+    to top,
+    rgba(47,123,181,0.4) 0%,
+    rgba(47,123,181,0.2) 20%,
+    rgba(0,0,0,0) 40%
+  );
+}
+
+
+/* VIEWPORT GRADIENT (locked) */
+.bg-gradient {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+
+  background: linear-gradient(
+    to bottom,
+    #ffffff 0%,
+    #7fb6db 40%,
+    #2f7bb5 100%
+  );
+}
+
+#bg3d {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
 }
 
 /* TOP BAR */
@@ -73,6 +136,7 @@ html, body {
 .gallery.fade-in {
   opacity: 1;
 }
+
 
 .item {
   position: relative;
@@ -155,12 +219,26 @@ html, body {
   font-size: 22px;
 }
 
+.scroll-buffer {
+  height: 100vh;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0%,
+    rgba(47,123,181,0.2) 40%,
+    rgba(47,123,181,0.4) 100%
+  );
+
+  pointer-events: none;
+}
+
 /* RESPONSIVE */
 @media (max-width: 1200px) {
   .gallery {
     column-count: 2;
   }
 }
+
 
 @media (max-width: 700px) {
   .filters {
@@ -183,10 +261,13 @@ html, body {
 </head>
 
 <body>
-
+<div class="bg-gradient"></div>
 <div class="topbar">
   <a class="back" href="/">← BACK TO TANK</a>
 </div>
+
+<canvas id="bg3d"></canvas>
+
 
 <div class="filters">
   <button class="active" data-filter="all">ALL</button>
@@ -196,6 +277,7 @@ html, body {
 </div>
 
 <div class="gallery"></div>
+<div class="scroll-buffer"></div> 
 
 <div class="viewer" id="viewer">
   <div class="close">✕</div>
@@ -206,6 +288,164 @@ html, body {
 </div>
 
 <script type="module">
+
+import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
+
+const canvas = document.getElementById("bg3d");
+
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(
+  15,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+);
+
+camera.position.set(0, -1.8, 35);
+
+const renderer = new THREE.WebGLRenderer({
+  canvas,
+  alpha: true,
+  antialias: true
+});
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
+
+/// ✅ FIXED POSTPROCESSING
+
+const composer = new EffectComposer(renderer);
+
+// 🔥 RENDER FIRST
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+// PIXEL PASS
+const pixelShader = {
+  uniforms: {
+    tDiffuse: { value: null },
+    resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+    pixelSize: { value: 2 }
+  },
+  vertexShader: `
+    varying vec2 vUv;
+    void main() {
+      vUv = uv;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);
+    }
+  `,
+  fragmentShader: `
+    uniform sampler2D tDiffuse;
+    uniform vec2 resolution;
+    uniform float pixelSize;
+    varying vec2 vUv;
+
+    void main() {
+      vec2 dxy = pixelSize / resolution;
+      vec2 coord = dxy * floor(vUv / dxy);
+      gl_FragColor = texture2D(tDiffuse, coord);
+    }
+  `
+};
+
+const pixelPass = new ShaderPass(pixelShader);
+composer.addPass(pixelPass);
+
+// BLUR PASS
+const blurShader = {
+  uniforms: {
+    tDiffuse: { value: null },
+    strength: { value: 0.00075 }
+  },
+  vertexShader: pixelShader.vertexShader,
+  fragmentShader: `
+    uniform sampler2D tDiffuse;
+    uniform float strength;
+    varying vec2 vUv;
+
+    void main() {
+      vec4 sum = vec4(0.0);
+
+      sum += texture2D(tDiffuse, vUv + vec2(-strength, -strength));
+      sum += texture2D(tDiffuse, vUv + vec2( strength, -strength));
+      sum += texture2D(tDiffuse, vUv + vec2(-strength,  strength));
+      sum += texture2D(tDiffuse, vUv + vec2( strength,  strength));
+
+      gl_FragColor = sum * 0.25;
+    }
+  `
+};
+
+const blurPass = new ShaderPass(blurShader);
+composer.addPass(blurPass);
+
+// update sizes
+composer.setSize(window.innerWidth, window.innerHeight);
+pixelPass.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+
+// LIGHT
+scene.add(new THREE.AmbientLight(0xffffff, 1));
+
+// MODEL
+const loader = new GLTFLoader();
+
+loader.load("/src/assets/models/city_use.glb", (gltf) => {
+  const city = gltf.scene;
+
+  city.scale.set(2.5, 2.5, 2.5);
+  city.position.set(0, -5, 0);
+
+  city.traverse((child) => {
+    if (child.isMesh) {
+      child.material = new THREE.MeshBasicMaterial({
+        color: 0x2f7bb5,
+        transparent: true,
+        opacity: 0.9
+      });
+    }
+  });
+
+  scene.add(city);
+});
+
+scene.fog = new THREE.Fog(0xcfe6f5, 15, 40);
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  camera.position.x = Math.sin(Date.now() * 0.0001) * 0.5;
+
+  composer.render(); // 🔥 now shaders actually apply
+}
+
+animate();
+
+window.addEventListener("resize", () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  composer.setSize(window.innerWidth, window.innerHeight);
+
+  pixelPass.uniforms.resolution.value.set(
+    window.innerWidth,
+    window.innerHeight
+  );
+});
+
+
+
+
+
+
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const modules = import.meta.glob(
     "./src/assets/selected_works/**/*.{png,jpg,jpeg,webp,gif,pdf}",

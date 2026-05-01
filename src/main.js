@@ -140,13 +140,16 @@ function makePixelHudCanvas({
 function drawHudBlock(ctx, w, h, lines) {
   ctx.clearRect(0, 0, w, h);
 
-  // subtle pixel “panel” background
+  const { w: vw, h: vh } = getViewportSize();
+  const scale = Math.min(vw / 1200, vh / 800);
+
+  // background
   ctx.globalAlpha = 0.35;
   ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, w, h);
   ctx.globalAlpha = 1.0;
 
-  // thin border
+  // border
   ctx.globalAlpha = 0.55;
   ctx.strokeStyle = '#ffffff';
   ctx.strokeRect(0.5, 0.5, w - 1, h - 1);
@@ -155,15 +158,17 @@ function drawHudBlock(ctx, w, h, lines) {
   ctx.fillStyle = '#ffffff';
   ctx.textAlign = 'left';
   ctx.textBaseline = 'top';
-  ctx.font = '14px monospace';
 
-  const padX = 8;
-  const padY = 7;
+  const padX = 8 * scale;
+  const padY = 7 * scale;
 
+  ctx.font = `${14 * scale}px monospace`;
   if (lines[0]) ctx.fillText(lines[0], padX, padY);
+
   ctx.globalAlpha = 0.9;
-  ctx.font = '13px monospace';
-  if (lines[1]) ctx.fillText(lines[1], padX, padY + 18);
+  ctx.font = `${13 * scale}px monospace`;
+  if (lines[1]) ctx.fillText(lines[1], padX, padY + (18 * scale));
+
   ctx.globalAlpha = 1.0;
 }
 
@@ -171,38 +176,41 @@ const hudNY = makePixelHudCanvas({ w: 280, h: 44 });
 const hudTK = makePixelHudCanvas({ w: 280, h: 44 });
 
 function layoutHUD() {
-  const { w } = getViewportSize();
-  const pad = 12;
+  const { w, h } = getViewportSize();
+
+  // SAME SCALE SYSTEM as title
+  const scale = Math.min(w / 1200, h / 800);
+
+  const pad = 12 * scale;
+  const boxWidth = 280 * scale;
 
   const safeTop = 'env(safe-area-inset-top, 0px)';
   const safeLeft = 'env(safe-area-inset-left, 0px)';
   const safeRight = 'env(safe-area-inset-right, 0px)';
 
-  const hudCssW = Math.max(220, Math.min(340, Math.floor(w * 0.46)));
-
   if (w < 560) {
+    // STACKED MOBILE
     Object.assign(hudNY.canvas.style, {
       top: `calc(${safeTop} + ${pad}px)`,
       left: '50%',
-      right: 'auto',
       transform: 'translateX(-50%)',
-      width: `${Math.min(320, Math.floor(w * 0.92))}px`
+      width: `${Math.min(boxWidth, w * 0.9)}px`
     });
 
     Object.assign(hudTK.canvas.style, {
-      top: `calc(${safeTop} + ${pad + 52}px)`,
+      top: `calc(${safeTop} + ${pad + (50 * scale)}px)`,
       left: '50%',
-      right: 'auto',
       transform: 'translateX(-50%)',
-      width: `${Math.min(320, Math.floor(w * 0.92))}px`
+      width: `${Math.min(boxWidth, w * 0.9)}px`
     });
+
   } else {
+    // DESKTOP LEFT / RIGHT
     Object.assign(hudNY.canvas.style, {
       top: `calc(${safeTop} + ${pad}px)`,
       left: `calc(${safeLeft} + ${pad}px)`,
-      right: 'auto',
       transform: 'none',
-      width: `${hudCssW}px`
+      width: `${boxWidth}px`
     });
 
     Object.assign(hudTK.canvas.style, {
@@ -210,7 +218,7 @@ function layoutHUD() {
       right: `calc(${safeRight} + ${pad}px)`,
       left: 'auto',
       transform: 'none',
-      width: `${hudCssW}px`
+      width: `${boxWidth}px`
     });
   }
 }
@@ -342,6 +350,42 @@ Object.assign(titleCanvas.style, {
 });
 document.body.appendChild(titleCanvas);
 
+// ------------------------------
+// Handle (@_danielscanlon)
+
+const handleCanvas = document.createElement('canvas');
+const handleCtx = handleCanvas.getContext('2d');
+
+const HANDLE_W = 320;
+const HANDLE_H = 32;
+
+handleCanvas.width = HANDLE_W;
+handleCanvas.height = HANDLE_H;
+
+handleCtx.imageSmoothingEnabled = false;
+handleCtx.clearRect(0, 0, HANDLE_W, HANDLE_H);
+
+handleCtx.font = '12px monospace';
+handleCtx.textAlign = 'center';
+handleCtx.textBaseline = 'middle';
+handleCtx.fillStyle = '#b6b6b6ff';
+handleCtx.fillText('@_danielscanlon', HANDLE_W / 2, HANDLE_H / 2);
+
+Object.assign(handleCanvas.style, {
+  position: 'absolute',
+  left: '50%',
+  top: '85%',
+transform: 'translate(-50%, calc(-50% + 80px))',
+  width: 'min(360px, 80vw)',
+  height: 'auto',
+  imageRendering: 'pixelated',
+  pointerEvents: 'none',
+  zIndex: 20,
+  opacity: '0.85'
+});
+
+document.body.appendChild(handleCanvas);
+
 // Hover Label (PIXELATED, canvas-based like the title)
 const hoverCanvas = document.createElement('canvas');
 const hoverCtx = hoverCanvas.getContext('2d');
@@ -371,12 +415,22 @@ document.body.appendChild(hoverCanvas);
 
 
 function layoutTitleAndHover() {
-  const { w } = getViewportSize();
-  const offset = w < 560 ? 40 : 52;
+  const { w, h } = getViewportSize();
 
-  titleCanvas.style.width = 'min(420px, 92vw)';
-  hoverCanvas.style.width = 'min(420px, 92vw)';
-  hoverCanvas.style.transform = `translate(-50%, calc(-50% + ${offset}px))`;
+  // scale everything proportionally
+  const scale = Math.min(w / 1200, h / 800);
+
+  const titleOffset = 0;
+  const hoverOffset = 50 * scale;
+  const handleOffset = 95 * scale;
+
+  titleCanvas.style.width = `${Math.min(420 * scale, w * 0.9)}px`;
+  hoverCanvas.style.width = `${Math.min(420 * scale, w * 0.9)}px`;
+  handleCanvas.style.width = `${Math.min(360 * scale, w * 0.8)}px`;
+
+  titleCanvas.style.transform = `translate(-50%, calc(-50% + ${titleOffset}px))`;
+  hoverCanvas.style.transform = `translate(-50%, calc(-50% + ${hoverOffset}px))`;
+  handleCanvas.style.transform = `translate(-50%, calc(-50% + ${handleOffset}px))`;
 }
 layoutTitleAndHover();
 

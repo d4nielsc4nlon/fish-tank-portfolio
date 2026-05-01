@@ -51,6 +51,7 @@
         text-decoration: none;
         color: white;
         opacity: 0.9;
+        border-bottom: none;
       }
       .back:hover { opacity: 1; }
 
@@ -120,8 +121,62 @@
       .label { font-size: 11px; opacity: 0.7; }
       .value { font-size: 14px; opacity: 0.95; }
 
-      a { color: #d7fbff; text-decoration: none; }
-      a:hover { text-decoration: underline; }
+     a {
+  color: white;
+  text-decoration: none;
+  position: relative;
+  display: inline-block;
+
+  border-bottom: 1px dotted rgba(255,255,255,0.4);
+
+  transition: 
+    opacity 0.2s ease,
+    text-shadow 0.2s ease,
+    transform 0.12s ease;
+}
+
+a:hover {
+  opacity: 0.85;
+  text-shadow:
+    0 0 6px rgba(255,255,255,0.8),
+    0 0 14px rgba(180,220,255,0.6);
+
+  transform: translateY(-1px);
+}
+
+a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+  background: rgba(255,255,255,0.6);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+
+a:hover::after {
+  transform: scaleX(1);
+  animation: ripple 0.6s ease;
+}
+
+a:hover {
+  animation: jitter 0.25s steps(2) infinite;
+}
+
+@keyframes jitter {
+  0%   { transform: translate(0px, 0px); }
+  50%  { transform: translate(0.5px, -0.5px); }
+  100% { transform: translate(0px, 0px); }
+}
+
+@keyframes ripple {
+  0%   { transform: scaleX(0); }
+  50%  { transform: scaleX(1.05); }
+  100% { transform: scaleX(1); }
+}
 
       /* Form */
       form { display: grid; gap: 10px; }
