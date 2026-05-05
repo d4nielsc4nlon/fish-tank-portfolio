@@ -28,16 +28,20 @@ function updateResponsiveUI() {
 
 if (infoPanel) {
   if (isMobileView()) {
-    infoPanel.style.width = "52vw";
-infoPanel.style.maxWidth = "320px";
-    infoPanel.style.maxWidth = "88vw";
-    infoPanel.style.left = "auto";
-infoPanel.style.right = "12px";
-infoPanel.style.transform = "none";
-    infoPanel.style.top = "55%";
-    infoPanel.style.padding = "18px";
-    infoPanel.style.backdropFilter = "blur(6px)";
-  } else {
+  infoPanel.style.width = "48vw";
+  infoPanel.style.maxWidth = "280px";
+
+  infoPanel.style.right = "10px";
+  infoPanel.style.left = "auto";
+  infoPanel.style.transform = "none";
+
+  infoPanel.style.top = "80px";
+  infoPanel.style.maxHeight = "70vh";
+infoPanel.style.overflowY = "auto";
+  infoPanel.style.padding = "14px";
+
+  infoPanel.style.backdropFilter = "blur(6px)";
+}else {
     infoPanel.style.width = "";
     infoPanel.style.maxWidth = "";
     infoPanel.style.left = "";
@@ -218,7 +222,6 @@ const outlinePass = new OutlinePass(
 );
 outlinePass.edgeStrength = isMobileView() ? 4.0 : 6.0;
 outlinePass.edgeThickness = isMobileView() ? 1.6 : 2.4;
-outlinePass.edgeThickness = 2.4;
 outlinePass.pulsePeriod = 1.2;
 outlinePass.visibleEdgeColor.set("#8ace00");
 outlinePass.hiddenEdgeColor.set("#8ace00");
@@ -421,7 +424,7 @@ function createFactoryWall(factoryModel) {
       isFactory: true,
       position: new THREE.Vector3(
         xStart + spacing * i,
-       (isMobileView() ? -3.6 : -2.95) + randomBetween(-0.06, 0.08),
+     (-2.75 - (getCameraZ() - 8) * 0.42) + randomBetween(-0.07, 0.08),
         randomBetween(-0.75, 0.15)
       ),
       scaleVariation: [0.78, 1.25]
@@ -502,7 +505,8 @@ function selectObject(obj) {
   selectedObject.userData.isSelected = true;
   selectedObject.userData.savedVelocity = selectedObject.userData.velocity.clone();
   selectedObject.userData.velocity.set(0, 0, 0);
-  selectedObject.userData.targetScale = selectedObject.userData.baseScale * 2.2;
+  selectedObject.userData.targetScale =
+  selectedObject.userData.baseScale * (isMobileView() ? 1.4 : 2.2);
   pageTitle.style.opacity = "0";
 
   bringObjectForward(selectedObject);
@@ -592,7 +596,7 @@ function animate() {
   floatingObjects.forEach(obj => {
     if (obj.userData.isSelected) {
      const targetPos = isMobileView()
-  ? new THREE.Vector3(-1.4, 0.15, 1.9) // ← LEFT, not center
+  ? new THREE.Vector3(-1.9, 0.1, 2.2) // ← LEFT, not center
   : new THREE.Vector3(-2.5, 0.25, 1.2);
 
 obj.position.lerp(targetPos, 0.08);
