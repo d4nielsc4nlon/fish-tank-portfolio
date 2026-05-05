@@ -25,6 +25,27 @@ function getCameraZ() {
 function updateResponsiveUI() {
   pageTitle.style.fontSize = isMobileView() ? "18px" : "32px";
   pageTitle.style.width = isMobileView() ? "90vw" : "auto";
+
+if (infoPanel) {
+  if (isMobileView()) {
+    infoPanel.style.width = "52vw";
+infoPanel.style.maxWidth = "320px";
+    infoPanel.style.maxWidth = "88vw";
+    infoPanel.style.left = "auto";
+infoPanel.style.right = "12px";
+infoPanel.style.transform = "none";
+    infoPanel.style.top = "55%";
+    infoPanel.style.padding = "18px";
+    infoPanel.style.backdropFilter = "blur(6px)";
+  } else {
+    infoPanel.style.width = "";
+    infoPanel.style.maxWidth = "";
+    infoPanel.style.left = "";
+    infoPanel.style.transform = "";
+    infoPanel.style.top = "";
+    infoPanel.style.padding = "";
+  }
+}
 }
 
 const pageTitle = document.createElement("div");
@@ -195,8 +216,8 @@ const outlinePass = new OutlinePass(
   scene,
   camera
 );
-outlinePass.edgeStrength = 6.0;
-outlinePass.edgeGlow = 1.8;
+outlinePass.edgeStrength = isMobileView() ? 4.0 : 6.0;
+outlinePass.edgeThickness = isMobileView() ? 1.6 : 2.4;
 outlinePass.edgeThickness = 2.4;
 outlinePass.pulsePeriod = 1.2;
 outlinePass.visibleEdgeColor.set("#8ace00");
@@ -400,7 +421,7 @@ function createFactoryWall(factoryModel) {
       isFactory: true,
       position: new THREE.Vector3(
         xStart + spacing * i,
-        -2.95 + randomBetween(-0.06, 0.08),
+       (isMobileView() ? -3.6 : -2.95) + randomBetween(-0.06, 0.08),
         randomBetween(-0.75, 0.15)
       ),
       scaleVariation: [0.78, 1.25]
@@ -482,6 +503,7 @@ function selectObject(obj) {
   selectedObject.userData.savedVelocity = selectedObject.userData.velocity.clone();
   selectedObject.userData.velocity.set(0, 0, 0);
   selectedObject.userData.targetScale = selectedObject.userData.baseScale * 2.2;
+  pageTitle.style.opacity = "0";
 
   bringObjectForward(selectedObject);
   updateOutline();
@@ -506,7 +528,7 @@ function deselectObject() {
   if (selectedObject.userData.savedVelocity) {
     selectedObject.userData.velocity.copy(selectedObject.userData.savedVelocity);
   }
-
+pageTitle.style.opacity = "1";
   selectedObject.userData.targetScale = selectedObject.userData.baseScale;
   restoreObjectDepth(selectedObject);
 
@@ -569,7 +591,11 @@ function animate() {
 
   floatingObjects.forEach(obj => {
     if (obj.userData.isSelected) {
-      obj.position.lerp(new THREE.Vector3(-2.5, 0.25, 1.2), 0.08);
+     const targetPos = isMobileView()
+  ? new THREE.Vector3(-1.4, 0.15, 1.9) // ← LEFT, not center
+  : new THREE.Vector3(-2.5, 0.25, 1.2);
+
+obj.position.lerp(targetPos, 0.08);
       obj.rotation.x += 0.01;
       obj.rotation.y += 0.015;
       obj.rotation.z *= 0.96;
