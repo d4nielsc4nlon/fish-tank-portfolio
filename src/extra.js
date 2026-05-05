@@ -69,10 +69,13 @@ pageTitle.style.textAlign = "center";
 pageTitle.style.pointerEvents = "none";
 pageTitle.style.textShadow = "0 0 12px rgba(0,0,0,0.35)";
 document.body.appendChild(pageTitle);
+window.addEventListener("load", () => {
+  updateResponsiveUI();
+});
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xcfcfcf);
-scene.fog = new THREE.Fog(0xcfcfcf, 6, 13);
+scene.background = new THREE.Color(0xffffff);
+scene.fog = new THREE.Fog(0xffffff, 6, 13);
 
 const camera = new THREE.PerspectiveCamera(
   45,
@@ -131,7 +134,7 @@ const gridMaterial = new THREE.ShaderMaterial({
       float gy = gridLine(uv.y * scale, 0.035);
 
       float grid = max(gx, gy);
-      gl_FragColor = vec4(1.0, 1.0, 1.0, grid * opacity);
+      gl_FragColor = vec4(0.2, 0.2, 0.2, grid * opacity);
     }
   `
 });
