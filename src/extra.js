@@ -599,7 +599,7 @@ function animate() {
   floatingObjects.forEach(obj => {
     if (obj.userData.isSelected) {
      const targetPos = isMobileView()
-  ? new THREE.Vector3(-1.2, 0.1, 4) // ← LEFT, not center
+  ? new THREE.Vector3(-0.83, 0.1, 4) // ← LEFT, not center
   : new THREE.Vector3(-2.5, 0.25, 1.2);
 
 obj.position.lerp(targetPos, 0.08);
