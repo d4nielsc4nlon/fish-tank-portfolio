@@ -14,6 +14,19 @@ if (!container) {
 let hoveredObject = null;
 let selectedObject = null;
 
+function isMobileView() {
+  return window.innerWidth <= 768;
+}
+
+function getCameraZ() {
+  return isMobileView() ? 10.5 : 8;
+}
+
+function updateResponsiveUI() {
+  pageTitle.style.fontSize = isMobileView() ? "18px" : "32px";
+  pageTitle.style.width = isMobileView() ? "90vw" : "auto";
+}
+
 const pageTitle = document.createElement("div");
 pageTitle.textContent = "Anatomy of a Fish Kill";
 pageTitle.style.position = "fixed";
@@ -22,7 +35,8 @@ pageTitle.style.left = "50%";
 pageTitle.style.transform = "translate(-50%, -50%)";
 pageTitle.style.zIndex = "30";
 pageTitle.style.fontFamily = "monospace";
-pageTitle.style.fontSize = "32px";
+pageTitle.style.fontSize = isMobileView() ? "18px" : "32px";
+pageTitle.style.width = isMobileView() ? "90vw" : "auto";
 pageTitle.style.fontWeight = "700";
 pageTitle.style.letterSpacing = "0.1em";
 pageTitle.style.color = "#ffffff";
@@ -41,7 +55,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(0, 0, 8);
+camera.position.set(0, 0, getCameraZ());
 
 const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: false });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -603,6 +617,9 @@ animate();
 
 window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
+  camera.position.z = getCameraZ();
+  updateResponsiveUI();
+
   camera.updateProjectionMatrix();
 
   renderer.setSize(window.innerWidth, window.innerHeight);
