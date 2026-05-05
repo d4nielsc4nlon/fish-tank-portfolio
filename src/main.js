@@ -181,11 +181,11 @@ const scale = mobile
   const padX = 8 * scale;
   const padY = 7 * scale;
 
-  ctx.font = `${(mobile ? 15 : 14) * scale}px monospace`;
+  ctx.font = `${(mobile ? 13.5 : 14) * scale}px monospace`;
   if (lines[0]) ctx.fillText(lines[0], padX, padY);
 
   ctx.globalAlpha = 0.9;
-  ctx.font = `${(mobile ? 14 : 13) * scale}px monospace`;
+  ctx.font = `${(mobile ? 12.5 : 13) * scale}px monospace`;
   if (lines[1]) ctx.fillText(lines[1], padX, padY + (18 * scale));
 
   ctx.globalAlpha = 1.0;
@@ -213,39 +213,51 @@ const boxWidth = mobile
   const safeLeft = 'env(safe-area-inset-left, 0px)';
   const safeRight = 'env(safe-area-inset-right, 0px)';
 
-  if (w < 560) {
-    // STACKED MOBILE
-    Object.assign(hudNY.canvas.style, {
-      top: `calc(${safeTop} + ${pad}px)`,
-      left: '50%',
-      transform: 'translateX(-50%)',
-      width: `${Math.min(boxWidth, w * 0.9)}px`
-    });
+if (mobile) {
+  const safeTop = 'env(safe-area-inset-top, 0px)';
+  const safeLeft = 'env(safe-area-inset-left, 0px)';
+  const safeRight = 'env(safe-area-inset-right, 0px)';
 
-    Object.assign(hudTK.canvas.style, {
-      top: `calc(${safeTop} + ${pad + (64 * scale)}px)`,
-      left: '50%',
-      transform: 'translateX(-50%)',
-      width: `${Math.min(boxWidth, w * 0.9)}px`
-    });
+  const pad = 10;
+  const gap = 8;
 
-  } else {
-    // DESKTOP LEFT / RIGHT
-    Object.assign(hudNY.canvas.style, {
-      top: `calc(${safeTop} + ${pad}px)`,
-      left: `calc(${safeLeft} + ${pad}px)`,
-      transform: 'none',
-      width: `${boxWidth}px`
-    });
+  // total available width
+  const available = w - (pad * 2);
 
-    Object.assign(hudTK.canvas.style, {
-      top: `calc(${safeTop} + ${pad}px)`,
-      right: `calc(${safeRight} + ${pad}px)`,
-      left: 'auto',
-      transform: 'none',
-      width: `${boxWidth}px`
-    });
-  }
+  // split into two boxes
+  const boxWidth = (available - gap) / 2;
+
+  Object.assign(hudNY.canvas.style, {
+    top: `calc(${safeTop} + ${pad}px)`,
+    left: `calc(${safeLeft} + ${pad}px)`,
+    transform: 'none',
+    width: `${boxWidth}px`
+  });
+
+  Object.assign(hudTK.canvas.style, {
+    top: `calc(${safeTop} + ${pad}px)`,
+    left: `calc(${safeLeft} + ${pad + boxWidth + gap}px)`,
+    transform: 'none',
+    width: `${boxWidth}px`
+  });
+
+} else {
+  // DESKTOP (unchanged)
+  Object.assign(hudNY.canvas.style, {
+    top: `calc(env(safe-area-inset-top, 0px) + 12px)`,
+    left: `calc(env(safe-area-inset-left, 0px) + 12px)`,
+    transform: 'none',
+    width: `280px`
+  });
+
+  Object.assign(hudTK.canvas.style, {
+    top: `calc(env(safe-area-inset-top, 0px) + 12px)`,
+    right: `calc(env(safe-area-inset-right, 0px) + 12px)`,
+    left: 'auto',
+    transform: 'none',
+    width: `280px`
+  });
+}
 }
 layoutHUD();
 
