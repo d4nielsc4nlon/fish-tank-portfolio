@@ -58,17 +58,32 @@ scene.fog = new THREE.FogExp2(0x3a6f8f, 0.035);
 // ------------------------------
 // Camera
 const camera = new THREE.PerspectiveCamera(
-  60,
+  isMobile() ? 72 : 60, // wider FOV on mobile
   (getViewportSize().w / getViewportSize().h),
   0.1,
   200
 );
-camera.position.set(0, -1, 12);
+
+// pull camera back slightly on mobile
+if (isMobile()) {
+  camera.position.set(0, -1.2, 15);
+} else {
+  camera.position.set(0, -1, 12);
+}
+
 camera.lookAt(0, 0, 0);
 
 const cameraTarget = new THREE.Vector2();
 
 // ------------------------------
+
+//
+
+function isMobile() {
+  const { w } = getViewportSize();
+  return w < 768;
+}
+
 // Renderer
 const renderer = new THREE.WebGLRenderer({
   antialias: false,
@@ -1206,9 +1221,34 @@ function onResize() {
   // keep overhead pass aspect correct
   overheadPass.uniforms.aspect.value = w / h;
 
+const mobile = isMobile();
+
+// update FOV dynamically
+camera.fov = mobile ? 72 : 60;
+
+// adjust camera distance
+if (mobile) {
+  camera.position.z = 15;
+  camera.position.y = -1.2;
+} else {
+  camera.position.z = 12;
+  camera.position.y = -1;
+}
+
+camera.updateProjectionMatrix();
+applyMobileSceneScale();
   layoutHUD();
   layoutTitleAndHover();
 }
+
+function applyMobileSceneScale() {
+  if (isMobile()) {
+    scene.scale.set(1, 0.92, 1); // compress Y slightly
+  } else {
+    scene.scale.set(1, 1, 1);
+  }
+}
+applyMobileSceneScale();
 
 // Resize events
 window.addEventListener('resize', onResize);
