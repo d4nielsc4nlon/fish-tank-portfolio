@@ -156,7 +156,11 @@ function drawHudBlock(ctx, w, h, lines) {
   ctx.clearRect(0, 0, w, h);
 
   const { w: vw, h: vh } = getViewportSize();
-  const scale = Math.min(vw / 1200, vh / 800);
+  const mobile = vw < 560;
+
+const scale = mobile
+  ? Math.min(vw / 420, vh / 900)
+  : Math.min(vw / 1200, vh / 800);
 
   // background
   ctx.globalAlpha = 0.35;
@@ -177,11 +181,11 @@ function drawHudBlock(ctx, w, h, lines) {
   const padX = 8 * scale;
   const padY = 7 * scale;
 
-  ctx.font = `${14 * scale}px monospace`;
+  ctx.font = `${(mobile ? 15 : 14) * scale}px monospace`;
   if (lines[0]) ctx.fillText(lines[0], padX, padY);
 
   ctx.globalAlpha = 0.9;
-  ctx.font = `${13 * scale}px monospace`;
+  ctx.font = `${(mobile ? 14 : 13) * scale}px monospace`;
   if (lines[1]) ctx.fillText(lines[1], padX, padY + (18 * scale));
 
   ctx.globalAlpha = 1.0;
@@ -194,10 +198,16 @@ function layoutHUD() {
   const { w, h } = getViewportSize();
 
   // SAME SCALE SYSTEM as title
-  const scale = Math.min(w / 1200, h / 800);
+  const mobile = w < 560;
 
-  const pad = 12 * scale;
-  const boxWidth = 280 * scale;
+const scale = mobile
+  ? Math.min(w / 420, h / 900)   // MUCH less aggressive shrink
+  : Math.min(w / 1200, h / 800);
+
+const pad = mobile ? 14 * scale : 12 * scale;
+const boxWidth = mobile
+  ? Math.min(w * 0.82, 340)   // clamp for nice proportion
+  : 280 * scale;
 
   const safeTop = 'env(safe-area-inset-top, 0px)';
   const safeLeft = 'env(safe-area-inset-left, 0px)';
@@ -213,7 +223,7 @@ function layoutHUD() {
     });
 
     Object.assign(hudTK.canvas.style, {
-      top: `calc(${safeTop} + ${pad + (50 * scale)}px)`,
+      top: `calc(${safeTop} + ${pad + (64 * scale)}px)`,
       left: '50%',
       transform: 'translateX(-50%)',
       width: `${Math.min(boxWidth, w * 0.9)}px`
