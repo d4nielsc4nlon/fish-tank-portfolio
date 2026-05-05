@@ -1,413 +1,377 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Daniel Scanlon | Contact</title>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Daniel Scanlon | Contact</title>
 
-    <style>
-      html, body { margin: 0; height: 100%; background: #061a2a; }
-      body {
-        color: white;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        overflow: hidden;
-      }
+<style>
 
-      /* Pixel-ish look */
-      .pixel {
-        image-rendering: pixelated;
-        text-rendering: geometricPrecision;
-        -webkit-font-smoothing: none;
-        letter-spacing: 1px;
-      }
+  *,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #061a2a;
+}
 
-      /* Frame + topbar match your site */
-      .frame {
-        position: fixed;
-        inset: max(14px, env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px))
-               max(14px, env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px));
-        border: 0px solid rgba(255,255,255,0.45);
-        pointer-events: none;
-        z-index: 20;
-      }
+body {
+  color: white;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  overflow-x: hidden;
+}
 
-      .topbar {
-        position: fixed;
-        left: calc(env(safe-area-inset-left, 0px) + 18px);
-        right: calc(env(safe-area-inset-right, 0px) + 18px);
-        top: calc(env(safe-area-inset-top, 0px) + 18px);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        z-index: 25;
-      }
+/* Pixel aesthetic */
+.pixel {
+  image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+  letter-spacing: 1px;
+}
 
-      .back {
-        pointer-events: auto;
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
-        color: white;
-        opacity: 0.9;
-        border-bottom: none;
-      }
-      .back:hover { opacity: 1; }
+@media (max-width: 600px) {
 
-      /* Main layout */
-      .wrap {
-        position: fixed;
-        inset: 0;
-        display: grid;
-        place-items: center;
-        padding:
-          calc(env(safe-area-inset-top, 0px) + 84px)
-          calc(env(safe-area-inset-right, 0px) + 18px)
-          calc(env(safe-area-inset-bottom, 0px) + 18px)
-          calc(env(safe-area-inset-left, 0px) + 18px);
-        z-index: 25;
-        pointer-events: none;
-      }
+  .wrap {
+    padding:
+      calc(env(safe-area-inset-top, 0px) + 60px)
+      14px
+      calc(env(safe-area-inset-bottom, 0px) + 36px);
+  }
 
-      .panel {
-        pointer-events: auto;
-        width: min(920px, 92vw);
-        max-height: calc(100vh - 140px);
-        overflow: auto;
-        background: rgba(0,0,0,0.18);
-        border: 1px solid rgba(255,255,255,0.28);
-        padding: 22px;
-        box-shadow: 0 10px 50px rgba(0,0,0,0.35);
-        backdrop-filter: blur(6px);
-      }
+  .panel {
+  position: relative;
+  z-index: 30;
 
-      h1 { margin: 0 0 10px; font-size: 18px; }
-      .sub { margin: 0 0 16px; font-size: 13px; opacity: 0.9; line-height: 1.6; }
+  width: min(880px, 92vw); /* 👈 tighter + safer */
+  margin: 40px auto;
 
-      .grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 14px;
-      }
-      @media (max-width: 720px) {
-        .grid { grid-template-columns: 1fr; }
-      }
+  background: rgba(0,0,0,0.12);
+  border: 1px solid rgba(255,255,255,0.28);
+  padding: 20px;
 
-      /* Contact rows */
-      .contactRow {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 12px;
-        border: 1px solid rgba(255,255,255,0.22);
-        background: rgba(255,255,255,0.06);
-      }
+  backdrop-filter: blur(8px);
+}
 
-      .icon {
-        width: 34px;
-        height: 34px;
-        display: grid;
-        place-items: center;
-        border: 1px solid rgba(255,255,255,0.30);
-        background: rgba(0,0,0,0.18);
-      }
+  .grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* 👈 critical fix */
+  gap: 14px;
+}
 
-      .meta {
-        display: grid;
-        gap: 4px;
-      }
+  button {
+    min-width: 100%;
+  }
+}
 
-      .label { font-size: 11px; opacity: 0.7; }
-      .value { font-size: 14px; opacity: 0.95; }
+/* 🔥 TOP BAR */
+.topbar {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  top: calc(env(safe-area-inset-top, 0px) + 14px);
+  display: flex;
+  justify-content: space-between;
+  z-index: 50;
+}
 
-     a {
+.back {
+  text-decoration: none;
+  color: white;
+  opacity: 0.85;
+}
+.back:hover { opacity: 1; }
+
+/* 🔥 WRAP — FIXED ABOVE CANVAS */
+.wrap {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* 👈 prevents vertical clipping */
+
+  overflow-y: auto;
+
+  padding:
+    calc(env(safe-area-inset-top, 0px) + 70px)
+    20px
+    calc(env(safe-area-inset-bottom, 0px) + 40px);
+
+  z-index: 25;
+}
+
+/* 🔥 PANEL */
+.panel {
+  position: relative;
+  z-index: 30;
+
+  width: min(920px, 100%);
+  margin: 40px 0; /* 👈 ensures breathing room */
+
+  background: rgba(0,0,0,0.22);
+  border: 1px solid rgba(255,255,255,0.28);
+  padding: 22px;
+
+  backdrop-filter: blur(8px);
+}
+
+/* TEXT */
+h1 {
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+.sub {
+  font-size: 13px;
+  opacity: 0.9;
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* CONTACT ROW */
+.contactRow {
+  display: flex;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.05);
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.label {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.value {
+  font-size: 14px;
+}
+
+/* LINKS */
+a {
   color: white;
   text-decoration: none;
-  position: relative;
-  display: inline-block;
-
   border-bottom: 1px dotted rgba(255,255,255,0.4);
-
-  transition: 
-    opacity 0.2s ease,
-    text-shadow 0.2s ease,
-    transform 0.12s ease;
 }
 
-a:hover {
-  opacity: 0.85;
-  text-shadow:
-    0 0 6px rgba(255,255,255,0.8),
-    0 0 14px rgba(180,220,255,0.6);
-
-  transform: translateY(-1px);
+/* FORM */
+form {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.15);
 }
 
-a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -2px;
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+input, textarea {
   width: 100%;
-  height: 2px;
-  background: rgba(255,255,255,0.6);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.25s ease;
+  max-width: 100%; /* 👈 prevents overflow */
+
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(0,0,0,0.2);
+  color: white;
+
+  padding: 12px;
+  font-size: 14px;
+  font-family: inherit;
+
+  display: block;
 }
 
-a:hover::after {
-  transform: scaleX(1);
-  animation: ripple 0.6s ease;
+textarea {
+  min-height: 140px;
+  resize: vertical;
 }
 
-a:hover {
-  animation: jitter 0.25s steps(2) infinite;
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
 }
 
-@keyframes jitter {
-  0%   { transform: translate(0px, 0px); }
-  50%  { transform: translate(0.5px, -0.5px); }
-  100% { transform: translate(0px, 0px); }
+button {
+  flex: 1 1 0; /* 👈 equal width buttons */
+  min-width: 0;
+
+  border: 1px solid rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.08);
+  color: white;
+
+  padding: 12px;
+  font-family: inherit;
+  letter-spacing: 1px;
+
+  cursor: pointer;
 }
 
-@keyframes ripple {
-  0%   { transform: scaleX(0); }
-  50%  { transform: scaleX(1.05); }
-  100% { transform: scaleX(1); }
+button:hover {
+  background: rgba(255,255,255,0.15);
 }
 
-      /* Form */
-      form { display: grid; gap: 10px; }
+/* 🔥 MOBILE FIXES */
+@media (max-width: 600px) {
 
-      .field {
-        display: grid;
-        gap: 6px;
-      }
+  .wrap {
+    padding:
+      calc(env(safe-area-inset-top, 0px) + 60px)
+      14px
+      calc(env(safe-area-inset-bottom, 0px) + 28px);
+  }
 
-      .field label {
-        font-size: 11px;
-        opacity: 0.75;
-      }
+  .panel {
+    width: 94vw;
+    padding: 18px;
+  }
 
-      input, textarea {
-        width: 100%;
-        box-sizing: border-box;
-        border: 1px solid rgba(255,255,255,0.28);
-        background: rgba(0,0,0,0.18);
-        color: white;
-        padding: 10px 10px;
-        outline: none;
-        font-family: inherit;
-        font-size: 13px;
-        letter-spacing: 1px;
-      }
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 
-      textarea { min-height: 150px; resize: vertical; }
+  h1 { font-size: 16px; }
 
-      .actions {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 6px;
-      }
+  .sub { font-size: 12px; }
 
-      button {
-        cursor: pointer;
-        border: 1px solid rgba(255,255,255,0.35);
-        background: rgba(255,255,255,0.08);
-        color: white;
-        padding: 10px 12px;
-        font-family: inherit;
-        letter-spacing: 1px;
-      }
-      button:hover { background: rgba(255,255,255,0.12); }
+  .value { font-size: 13px; }
+}
+</style>
+</head>
 
-      .note {
-        margin-top: 10px;
-        font-size: 11px;
-        opacity: 0.72;
-        line-height: 1.5;
-      }
+<body>
 
-      /* Small helper toast */
-      .toast {
-        position: fixed;
-        left: 50%;
-        bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
-        transform: translateX(-50%);
-        padding: 10px 12px;
-        border: 1px solid rgba(255,255,255,0.28);
-        background: rgba(0,0,0,0.35);
-        backdrop-filter: blur(6px);
-        font-size: 12px;
-        opacity: 0;
-        transition: opacity 180ms ease;
-        z-index: 30;
-        pointer-events: none;
-      }
-      .toast.show { opacity: 1; }
-    </style>
-  </head>
+<!-- UI -->
+<div class="topbar pixel">
+  <a class="back" href="/">← BACK TO TANK</a>
+  <div style="opacity:.8;">CONTACT</div>
+</div>
 
-  <body>
-    <div class="frame"></div>
+<div class="wrap">
+  <div class="panel pixel">
 
-    <div class="topbar pixel">
-      <a class="back pixel" href="/">← BACK TO TANK</a>
-      <div class="pixel" style="opacity:.8;">CONTACT</div>
-    </div>
+    <h1>Contact</h1>
+    <p class="sub">
+      I'm open for commissions! Reach out with your favorite ideas.
+    </p>
 
-    <div class="wrap">
-      <div class="panel pixel">
-        <h1>Contact</h1>
-        <p class="sub">
-          I'm open for commissions! Reach out with your favorite ideas.
-        </p>
-
-        <div class="grid" style="margin-bottom: 14px;">
-          <div class="contactRow">
-            <div class="icon" aria-hidden="true">☎</div>
-            <div class="meta">
-              <div class="label">PHONE</div>
-              <div class="value"><a href="tel:+12674536540">267-453-6540</a></div>
-            </div>
-          </div>
-
-          <div class="contactRow">
-            <div class="icon" aria-hidden="true">✉</div>
-            <div class="meta">
-              <div class="label">EMAIL</div>
-              <div class="value"><a href="mailto:danielmaxscanlon@gmail.com">danielmaxscanlon@gmail.com</a></div>
-            </div>
+    <div class="grid">
+      <div class="contactRow">
+        <div class="icon">☎</div>
+        <div>
+          <div class="label">PHONE</div>
+          <div class="value">
+            <a href="tel:+12674536540">267-453-6540</a>
           </div>
         </div>
+      </div>
 
-        <div class="contactRow" style="margin-bottom: 14px;">
-          <div class="icon" aria-hidden="true">▦</div>
-          <div class="meta" style="width: 100%;">
-            <div class="label">SEND A MESSAGE</div>
-            <div class="value" style="opacity: 0.85; font-size: 12px;">
-              This form opens your email client with everything pre-filled.
-            </div>
+      <div class="contactRow">
+        <div class="icon">✉</div>
+        <div>
+          <div class="label">EMAIL</div>
+          <div class="value">
+            <a href="mailto:danielmaxscanlon@gmail.com">
+              danielmaxscanlon@gmail.com
+            </a>
           </div>
         </div>
-
-        <form id="contactForm" autocomplete="on">
-          <div class="grid">
-            <div class="field">
-              <label for="name">NAME</label>
-              <input id="name" name="name" type="text" placeholder="Your name" required />
-            </div>
-
-            <div class="field">
-              <label for="from">YOUR EMAIL</label>
-              <input id="from" name="from" type="email" placeholder="name@email.com" required />
-            </div>
-          </div>
-
-          <div class="field">
-            <label for="subject">SUBJECT</label>
-            <input id="subject" name="subject" type="text" placeholder="What’s this about?" required />
-          </div>
-
-          <div class="field">
-            <label for="message">MESSAGE</label>
-            <textarea id="message" name="message" placeholder="Write your message…" required></textarea>
-          </div>
-
-          <div class="actions">
-            <button type="submit">OPEN EMAIL CLIENT</button>
-            <button type="button" id="copyBtn">COPY MESSAGE</button>
-            <button type="reset">CLEAR</button>
-          </div>
-        </form>
       </div>
     </div>
 
-    <div id="toast" class="toast pixel">Copied.</div>
+    <div class="contactRow" style="margin-top:14px;">
+      <div class="icon">▦</div>
+      <div>
+        <div class="label">SEND A MESSAGE</div>
+        <div style="font-size:12px; opacity:0.8;">
+          This form opens your email client with everything pre-filled.
+        </div>
+      </div>
+    </div>
 
-    <!-- Same tank scene as main.js, but stripped of fish + HUD -->
-    <script type="module" src="/src/contact.js"></script>
+    <form id="contactForm">
 
-    <script>
-      (function () {
-        const to = 'danielmaxscanlon@gmail.com';
-        const form = document.getElementById('contactForm');
-        const toast = document.getElementById('toast');
-        const copyBtn = document.getElementById('copyBtn');
+      <div class="grid">
+        <div class="field">
+          <label>NAME</label>
+          <input id="name" type="text" placeholder="Your name" required>
+        </div>
 
-        function showToast(text) {
-          toast.textContent = text;
-          toast.classList.add('show');
-          clearTimeout(showToast._t);
-          showToast._t = setTimeout(() => toast.classList.remove('show'), 1100);
-        }
+        <div class="field">
+          <label>YOUR EMAIL</label>
+          <input id="from" type="email" placeholder="name@email.com" required>
+        </div>
+      </div>
 
-        function buildMailto() {
-          const name = document.getElementById('name').value.trim();
-          const from = document.getElementById('from').value.trim();
-          const subject = document.getElementById('subject').value.trim();
-          const message = document.getElementById('message').value.trim();
+      <div class="field">
+        <label>SUBJECT</label>
+        <input id="subject" type="text" placeholder="What’s this about?" required>
+      </div>
 
-          const body = [
-            message,
-            '',
-            '—',
-            `From: ${name}`,
-            `Email: ${from}`
-          ].join('\n');
+      <div class="field">
+        <label>MESSAGE</label>
+        <textarea id="message" placeholder="Write your message…" required></textarea>
+      </div>
 
-          const params = new URLSearchParams({
-            subject,
-            body
-          });
+      <div class="actions">
+        <button type="submit">OPEN EMAIL CLIENT</button>
+        <button type="button" id="copyBtn">COPY MESSAGE</button>
+        <button type="reset">CLEAR</button>
+      </div>
+    </form>
+  </div>
+</div>
 
-          return `mailto:${to}?${params.toString()}`;
-        }
+<!-- Three.js background -->
+<script type="module" src="/src/contact.js"></script>
 
-        form.addEventListener('submit', (e) => {
-          e.preventDefault();
-          const href = buildMailto();
-          window.location.href = href;
-        });
+<script>
+(function () {
+  const to = 'danielmaxscanlon@gmail.com';
+  const form = document.getElementById('contactForm');
+  const copyBtn = document.getElementById('copyBtn');
 
-        copyBtn.addEventListener('click', async () => {
-          const name = document.getElementById('name').value.trim();
-          const from = document.getElementById('from').value.trim();
-          const subject = document.getElementById('subject').value.trim();
-          const message = document.getElementById('message').value.trim();
+  const nameInput = document.getElementById('name');
+  const fromInput = document.getElementById('from');
+  const subjectInput = document.getElementById('subject');
+  const messageInput = document.getElementById('message');
 
-          const text = [
-            `To: ${to}`,
-            `Subject: ${subject}`,
-            '',
-            message,
-            '',
-            '—',
-            `From: ${name}`,
-            `Email: ${from}`
-          ].join('\n');
+  function buildMailto() {
+    return `mailto:${to}?subject=${encodeURIComponent(subjectInput.value)}&body=${encodeURIComponent(
+      messageInput.value + "\\n\\n—\\nFrom: " + nameInput.value + "\\nEmail: " + fromInput.value
+    )}`;
+  }
 
-          try {
-            await navigator.clipboard.writeText(text);
-            showToast('Copied to clipboard.');
-          } catch {
-            // Fallback: select+copy
-            const ta = document.createElement('textarea');
-            ta.value = text;
-            ta.style.position = 'fixed';
-            ta.style.left = '-9999px';
-            document.body.appendChild(ta);
-            ta.focus();
-            ta.select();
-            document.execCommand('copy');
-            document.body.removeChild(ta);
-            showToast('Copied.');
-          }
-        });
-      })();
-    </script>
-  </body>
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    window.location.href = buildMailto();
+  });
+
+  copyBtn.addEventListener('click', async () => {
+    await navigator.clipboard.writeText(messageInput.value);
+  });
+})();
+</script>
+
+</body>
 </html>
