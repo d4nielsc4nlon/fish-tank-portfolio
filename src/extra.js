@@ -75,7 +75,7 @@ window.addEventListener("load", () => {
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xffffff);
-scene.fog = new THREE.Fog(0xffffff, 6, 13);
+scene.fog = new THREE.Fog(0xffffff, 8, 14);
 
 const camera = new THREE.PerspectiveCamera(
   45,
@@ -95,7 +95,7 @@ container.appendChild(renderer.domElement);
 const ambient = new THREE.AmbientLight(0xffffff, 0.8);
 scene.add(ambient);
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 0.52);
+const dirLight = new THREE.DirectionalLight(0xffffff, 0.82);
 dirLight.position.set(3, 5, 6);
 scene.add(dirLight);
 
@@ -287,7 +287,7 @@ const floatingAssets = [
     count: 2,
     targetSize: 1.2,
     blurb:
-      "The fishing rod connects the scene to human extraction, recreation, food systems, and damaged aquatic habitats.",
+      "Congrats! You found the fishing rod <3",
     source: fishKillSource
   }
 ];
@@ -599,7 +599,7 @@ function animate() {
   floatingObjects.forEach(obj => {
     if (obj.userData.isSelected) {
      const targetPos = isMobileView()
-  ? new THREE.Vector3(-1.9, 0.1, 2.2) // ← LEFT, not center
+  ? new THREE.Vector3(-1.2, 0.1, 4) // ← LEFT, not center
   : new THREE.Vector3(-2.5, 0.25, 1.2);
 
 obj.position.lerp(targetPos, 0.08);
